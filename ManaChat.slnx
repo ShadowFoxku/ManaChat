@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="ManaChat.API/ManaChat.API.csproj" />
+  <Project Path="ManaChat.Core/ManaChat.Core.csproj" />
+  <Project Path="ManaChat.Databases.Identity/ManaChat.Databases.Identity.sqlproj" Id="170a439b-f16f-4372-ab3f-3f36df212678">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="ManaChat.Identity/ManaChat.Identity.csproj" />
+</Solution>
