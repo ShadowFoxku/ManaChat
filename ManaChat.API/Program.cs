@@ -1,5 +1,5 @@
+using ManaChat.Core.Configuration;
 using ManaChat.Core.Constants;
-using ManaChat.Identity.Constants;
 using ManaChat.Identity.Repositories;
 using ManaChat.Identity.Services;
 using ManaFox.Databases.Core.Interfaces;
@@ -14,7 +14,8 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddRuneReaderDb(DatabaseConstants.MessagingDatabaseString, builder.Configuration.GetSection("ConnectionStrings"));
+builder.Services.AddRuneReaderDb(DatabaseConstants.MessagingDatabaseKey, builder.Configuration.GetSection("ConnectionStrings"));
+builder.Services.Configure<ManaChatConfiguration>(builder.Configuration.GetSection("ManaChat"));
 builder.Services.AddScoped<IRuneReaderManager, RuneReaderManager>();
 
 builder.Services.AddScoped<IUserService, UserService>();

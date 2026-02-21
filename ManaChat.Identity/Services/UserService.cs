@@ -22,7 +22,7 @@ namespace ManaChat.Identity.Services
                 Email = email,
             };
 
-            return ReaderManager.RunInTransactionAsync(DatabaseConstants.IdentityDatabaseString, () =>
+            return ReaderManager.RunInTransactionAsync(DatabaseConstants.IdentityDatabaseKey, () =>
             {
                 return UserRepository.SaveUser(user).BindAsync(async (savedUser) =>
                 {
@@ -47,7 +47,7 @@ namespace ManaChat.Identity.Services
 
         public Task<Ritual<bool>> DeleteUser(long id)
         {
-            return ReaderManager.RunInTransactionAsync(DatabaseConstants.IdentityDatabaseString, () =>
+            return ReaderManager.RunInTransactionAsync(DatabaseConstants.IdentityDatabaseKey, () =>
                 UserRepository.GetUserIdentities(id)
                     .BindAsync(async identities =>
                     {
@@ -97,7 +97,7 @@ namespace ManaChat.Identity.Services
 
         public Task<Ritual<UserIdentity>> SaveUserIdentity(long userId, long id, string name, bool isDefault)
         {
-            return ReaderManager.RunInTransactionAsync(DatabaseConstants.IdentityDatabaseString, () => 
+            return ReaderManager.RunInTransactionAsync(DatabaseConstants.IdentityDatabaseKey, () => 
                 UserRepository.GetUserIdentity(userId, id).BindAsync((identity) =>
                 {
                     identity.Name = name;

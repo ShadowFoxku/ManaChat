@@ -2,7 +2,7 @@
 {
     public class DatabaseConstants
     {
-        public const string IdentityDatabaseString = "Identity";
-        public const string MessagingDatabaseString = "Messaging";
+        public const string IdentityDatabaseKey = "Identity";
+        public const string MessagingDatabaseKey = "Messaging";
     }
 }

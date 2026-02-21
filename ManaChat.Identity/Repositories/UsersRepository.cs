@@ -149,7 +149,7 @@ namespace ManaChat.Identity.Repositories
 
         private async Task<IRitualRuneReader> GetRuneReaderAsync()
         {
-            _runeReader ??= await runeFactory.GetRitualRuneReaderAsync(DatabaseConstants.IdentityDatabaseString);
+            _runeReader ??= await runeFactory.GetRitualRuneReaderAsync(DatabaseConstants.IdentityDatabaseKey);
             return _runeReader;
         }
     }

@@ -5,5 +5,10 @@
     <Build />
     <Deploy />
   </Project>
+  <Project Path="ManaChat.Databases.Messaging/ManaChat.Databases.Messaging.sqlproj" Id="795f787e-89a6-4c9b-a44d-a7f31629447d">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="ManaChat.Databases.Migrations/ManaChat.Databases.Migrations.csproj" Id="4a26cc78-9d6d-4656-8419-7e1764f7a836" />
   <Project Path="ManaChat.Identity/ManaChat.Identity.csproj" />
 </Solution>

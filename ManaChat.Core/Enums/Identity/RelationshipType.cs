@@ -4,7 +4,5 @@ public enum RelationshipType
 {
     Blocked = -10,
     None = 0,
-    Contacts = 10,
-    FriendRequested = 20,
-    Friends = 30
+    Contacts = 10
 }
