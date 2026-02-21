@@ -56,5 +56,23 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="Tables" />
+    <Folder Include="StoredProcedures" />
+    <Folder Include="Schemas" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="tables\users.sql" />
+    <Build Include="Tables\identities.sql" />
+    <Build Include="Tables\relationships.sql" />
+    <Build Include="Tables\external_server.sql" />
+    <Build Include="StoredProcedures\usp_user_delete.sql" />
+    <Build Include="StoredProcedures\usp_user_get_by_id.sql" />
+    <Build Include="StoredProcedures\usp_user_get_by_username.sql" />
+    <Build Include="StoredProcedures\usp_user_save.sql" />
+    <Build Include="StoredProcedures\usp_user_save_password.sql" />
+    <Build Include="Schemas\identity.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyLoader.cs" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,10 @@
+﻿CREATE TABLE [identity].[users]
+(
+	[Id] BIGINT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	[Username] NVARCHAR(256) NOT NULL,
+	[Email] NVARCHAR(256) NULL,
+	[PhoneNumber] NVARCHAR(20) NULL,
+	[PasswordHash] NVARCHAR(MAX) NULL,
+	[ServerId] BIGINT NULL,
+	[Deleted] BIT NOT NULL DEFAULT 0
+)

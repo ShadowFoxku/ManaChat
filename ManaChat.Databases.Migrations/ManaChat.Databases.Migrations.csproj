@@ -21,15 +21,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ManaChat.Core\ManaChat.Core.csproj" />
-    <ProjectReference Include="..\ManaChat.Databases.Identity\ManaChat.Databases.Identity.sqlproj" />
-    <ProjectReference Include="..\ManaChat.Databases.Messaging\ManaChat.Databases.Messaging.sqlproj" />
+    <Content Include="..\ManaChat.API\appsettings.json" Link="appsettings.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\ManaChat.Core\ManaChat.Core.csproj" />
+    <ProjectReference Include="..\ManaChat.Databases.Identity\ManaChat.Databases.Identity.sqlproj" />
+    <ProjectReference Include="..\ManaChat.Databases.Messaging\ManaChat.Databases.Messaging.sqlproj" />
   </ItemGroup>
 
   <ItemGroup>

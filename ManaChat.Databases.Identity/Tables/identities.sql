@@ -1,0 +1,6 @@
+﻿CREATE TABLE [identity].[identities]
+(
+	[Id] BIGINT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	[UserId] BIGINT NOT NULL REFERENCES [identity].[users](Id) ON DELETE CASCADE,
+	[Name] NVARCHAR(256) NOT NULL,
+)
