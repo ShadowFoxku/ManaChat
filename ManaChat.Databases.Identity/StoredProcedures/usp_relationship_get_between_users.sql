@@ -10,7 +10,7 @@ BEGIN
 		r.UserId,
 		r.RecipientUserId,
 		r.Relationship
-	FROM [identity].[Relationships] r
+	FROM [identity].[relationships] r
 	WHERE r.UserId = @UserId
 	AND r.RecipientUserId = @RecipientUserId;
 END

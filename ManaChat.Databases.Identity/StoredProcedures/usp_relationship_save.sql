@@ -10,13 +10,13 @@ BEGIN
 	
 	IF @Id = 0
 	BEGIN
-		INSERT INTO [identity].[Relationships] (UserId, RecipientUserId, Relationship, Bookmarked)
+		INSERT INTO [identity].[relationships] (UserId, RecipientUserId, Relationship, Bookmarked)
 		VALUES (@UserId, @RecipientUserId, @Relationship, @Bookmarked);
 		SET @Id = SCOPE_IDENTITY();
 	END 
 	ELSE
 	BEGIN
-		UPDATE [identity].[Relationships]
+		UPDATE [identity].[relationships]
 		SET 
 			Relationship = @Relationship,
 			Bookmarked = @Bookmarked

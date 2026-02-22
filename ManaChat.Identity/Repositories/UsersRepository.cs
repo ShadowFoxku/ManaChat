@@ -61,6 +61,25 @@ namespace ManaChat.Identity.Repositories
             return (await reader.ExecuteAsync(IdentityDBConstants.StoredProcedures.DeleteUser, CommandType.StoredProcedure, new { Id = id })).Map(result => result > 0);
         }
 
+        public async Task<Ritual<Session>> GetUserSession(string token)
+        {
+            var reader = await GetRuneReaderAsync();
+            return await reader.QuerySingleOrDefaultAsync<Session>(IdentityDBConstants.StoredProcedures.GetUserSessionByToken, CommandType.StoredProcedure, new { Token = token });
+        }
+
+        public async Task<Ritual<bool>> UpdateUserSession(long sessionId, long userId, string token, DateTime expiresAt)
+        {
+            var reader = await GetRuneReaderAsync();
+            return (await reader.ExecuteAsync(IdentityDBConstants.StoredProcedures.UpdateUserSession, CommandType.StoredProcedure, new
+            {
+                Id = sessionId,
+                UserId = userId,
+                Token = token,
+                StartedAt = DateTimeOffset.UtcNow,
+                ExpiresAt = expiresAt
+            })).Map(result => result > 0);
+        }
+
         public async Task<Ritual<List<UserIdentity>>> GetUserIdentities(long userId)
         {
             var reader = await GetRuneReaderAsync();

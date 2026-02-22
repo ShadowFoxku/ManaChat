@@ -71,6 +71,16 @@
     <Build Include="StoredProcedures\usp_user_save.sql" />
     <Build Include="StoredProcedures\usp_user_save_password.sql" />
     <Build Include="Schemas\identity.sql" />
+    <Build Include="StoredProcedures\usp_identities_get_for_user.sql" />
+    <Build Include="StoredProcedures\usp_identity_get.sql" />
+    <Build Include="StoredProcedures\usp_identity_save.sql" />
+    <Build Include="StoredProcedures\usp_identity_delete.sql" />
+    <Build Include="StoredProcedures\usp_relationships_get_for_user.sql" />
+    <Build Include="StoredProcedures\usp_relationship_get_between_users.sql" />
+    <Build Include="StoredProcedures\usp_relationship_save.sql" />
+    <Build Include="Tables\sessions.sql" />
+    <Build Include="StoredProcedures\usp_session_get_by_token.sql" />
+    <Build Include="StoredProcedures\usp_session_save.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyLoader.cs" />

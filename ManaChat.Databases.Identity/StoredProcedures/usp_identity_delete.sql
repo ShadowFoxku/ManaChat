@@ -2,7 +2,7 @@
 	@Id BIGINT
 AS
 BEGIN
-	UPDATE [identity].[Identities]
+	UPDATE [identity].[identities]
 	SET Deleted = 1
 	WHERE Id = @Id;
 END

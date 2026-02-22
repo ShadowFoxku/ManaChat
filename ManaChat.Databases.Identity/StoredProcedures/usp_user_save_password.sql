@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE [identity].[usp_user_save_password]
 	@UserId BIGINT,
-	@PasswordHash NVARCHAR(MAX)
+	@PasswordHash VARCHAR(MAX)
 AS
 BEGIN
 	UPDATE [identity].[users]

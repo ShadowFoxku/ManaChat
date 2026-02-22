@@ -59,7 +59,7 @@ namespace ManaChat.Identity.Services
         }
 
         public Task<Ritual<bool>> DeleteUserIdentity(long id)
-        {
+        { 
             return UserRepository.DeleteUserIdentity(id);
         }
 

@@ -9,7 +9,7 @@ BEGIN
 		[Name],
 		[UserId],
 		[Default]
-	FROM [identity].[Identities]
+	FROM [identity].[identities]
 	WHERE UserId = @UserId
 	AND Deleted = 0;
 END

@@ -7,5 +7,10 @@ namespace ManaChat.API.Controllers
     public class IdentityController : ControllerBase
     {
 
+        [HttpPost]
+        public IActionResult CreateIdentity()
+        {
+            return Ok();
+        }
     }
 }

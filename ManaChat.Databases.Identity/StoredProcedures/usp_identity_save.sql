@@ -8,13 +8,13 @@ BEGIN
 	SET NOCOUNT ON;
 	IF @Id = 0
 	BEGIN
-		INSERT INTO [identity].[Identities] (UserId, [Name], [Default])
+		INSERT INTO [identity].[identities] (UserId, [Name], [Default])
 		VALUES (@UserId, @Name, @Default);
 		SET @Id = SCOPE_IDENTITY();
 	END
 	ELSE
 	BEGIN
-		UPDATE [identity].[Identities]
+		UPDATE [identity].[identities]
 		SET [Name] = @Name,
 			[Default] = @Default
 		WHERE Id = @Id
@@ -24,7 +24,7 @@ BEGIN
 
 	IF @Default = 1
 	BEGIN
-		UPDATE [identity].[Identities]
+		UPDATE [identity].[identities]
 		SET [Default] = 0
 		WHERE UserId = @UserId
 		AND Id <> @Id

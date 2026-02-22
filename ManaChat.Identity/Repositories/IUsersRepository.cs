@@ -11,6 +11,8 @@ namespace ManaChat.Identity.Repositories
         Task<Ritual<UserInternal>> SaveUser(UserInternal user);
         Task<Ritual<bool>> UpdateUserPassword(long id, string passwordHash);
         Task<Ritual<bool>> DeleteUser(long id);
+        Task<Ritual<bool>> UpdateUserSession(long sessionId, long userId, string token, DateTime expiresAt);
+        Task<Ritual<Session>> GetUserSession(string token);
         
         Task<Ritual<List<UserIdentity>>> GetUserIdentities(long userId);
         Task<Ritual<UserIdentity>> SaveUserIdentity(UserIdentity identity);
