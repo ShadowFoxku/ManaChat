@@ -12,13 +12,13 @@
             public const string DeleteUser = $"{Schema}.usp_user_delete";
 
             public const string GetUserIdentitiesForUser = $"{Schema}.usp_identities_get_for_user";
-            public const string GetUserIdentity = $"{Schema}.usp_identities_get";
-            public const string SaveUserIdentity = $"{Schema}.usp_identities_save";
-            public const string DeleteUserIdentity = $"{Schema}.usp_identities_delete";
+            public const string GetUserIdentity = $"{Schema}.usp_identity_get";
+            public const string SaveUserIdentity = $"{Schema}.usp_identity_save";
+            public const string DeleteUserIdentity = $"{Schema}.usp_identity_delete";
 
             public const string GetUserRelationships = $"{Schema}.usp_relationships_get_for_user";
-            public const string GetUserRelationBetweenUsers = $"{Schema}.usp_relationships_get_between_users";
-            public const string SaveUserRelationship = $"{Schema}.usp_relationships_save";
+            public const string GetUserRelationBetweenUsers = $"{Schema}.usp_relationship_get_between_users";
+            public const string SaveUserRelationship = $"{Schema}.usp_relationship_save";
         }
     }
 }

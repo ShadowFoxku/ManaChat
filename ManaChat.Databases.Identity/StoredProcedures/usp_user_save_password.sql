@@ -3,9 +3,9 @@
 	@PasswordHash NVARCHAR(MAX)
 AS
 BEGIN
-	SET NOCOUNT ON;
-
 	UPDATE [identity].[users]
 	SET PasswordHash = @PasswordHash
 	WHERE Id = @UserId;
+
+	RETURN @@ROWCOUNT;
 END

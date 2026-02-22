@@ -18,7 +18,7 @@ namespace ManaChat.Identity.Repositories
         public async Task<Ritual<UserInternal>> GetUser(long id)
         {
             var reader = await GetRuneReaderAsync();
-            return await reader.QuerySingleAsync<UserInternal>(IdentityDBConstants.StoredProcedures.GetUserIdentitiesForUser, CommandType.StoredProcedure, new { Id = id });
+            return await reader.QuerySingleAsync<UserInternal>(IdentityDBConstants.StoredProcedures.GetUserById, CommandType.StoredProcedure, new { Id = id });
         }
 
         public async Task<Ritual<UserInternal>> SaveUser(UserInternal user)

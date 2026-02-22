@@ -24,4 +24,6 @@ BEGIN
 			ServerId = @ServerId
 		WHERE Id = @Id;
 	END
+
+	SELECT @Id as Id;
 END
