@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_relationship_save]
+﻿CREATE PROCEDURE [identity].[usp_relationship_save]
 	@Id BIGINT,
 	@UserId BIGINT,
 	@RecipientUserId BIGINT,

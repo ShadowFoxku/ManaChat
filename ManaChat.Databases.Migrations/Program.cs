@@ -1,8 +1,8 @@
 ﻿using ManaFox.Databases.Migrations;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using ManaFox.Extensions.Flow;
 using ManaChat.Core.Constants;
+using ManaFox.Extensions.Flow;
 
 internal class Program
 {
@@ -34,37 +34,43 @@ internal class Program
 
             var connectionStrings = config.GetSection("ConnectionStrings");
 
+            var root = AppContext.BaseDirectory;
+
             if (doIdentity)
             {
+                Log.Information("Starting identity database script generation...");
                 var identityConnectionString = connectionStrings[DatabaseConstants.IdentityDatabaseKey] ?? throw new InvalidOperationException("Identity connection string not configured");
-                Log.Information("Starting identity database migrations...");
-                var identityResult = RuneMigrator
-                    .Create(identityConnectionString)
-                    .Bind(m => m.WithEmbeddedScripts(typeof(ManaChat.Databases.Identity.AssemblyLoader).Assembly))
-                    .Bind(m => m.UseDefaultFolderPattern())
-                    .Bind(m => m.Run());
 
-                if (!identityResult.IsFlowing)
+                var result = RuneMigrator.Create()
+                    .Bind(m => m.WithConnectionString(identityConnectionString))
+                    .Bind(m => m.WithSqlProject(Path.Combine(root, "../../../../ManaChat.Databases.Identity/ManaChat.Databases.Identity.sqlproj")))
+                    //.Bind(m => m.GenerateTo(".Scripts/Identity"))
+                    .Bind(m => m.CreateDatabaseIfNotExists())
+                    .Bind(m => m.Deploy());
+
+                if (!result.IsFlowing)
                 {
-                    Log.Error("Identity database migration failed: {Error}", identityResult.GetTear());
+                    Log.Error("Identity migration failed: {Error}", result.GetTear());
                     if (failOnError)
-                        return 1; 
+                        return 1;
                 }
             }
 
             if (doMessaging)
             {
+                Log.Information("Starting messaging database script generation...");
                 var messagingConnectionString = connectionStrings[DatabaseConstants.MessagingDatabaseKey] ?? throw new InvalidOperationException("Messaging connection string not configured");
-                Log.Information("Starting messaging database migrations...");
-                var messagingResult = RuneMigrator
-                    .Create(messagingConnectionString)
-                    .Bind(m => m.WithEmbeddedScripts(typeof(ManaChat.Databases.Messaging.AssemblyLoader).Assembly))
-                    .Bind(m => m.UseDefaultFolderPattern())
-                    .Bind(m => m.Run());
 
-                if (!messagingResult.IsFlowing)
+                var result = RuneMigrator.Create()
+                    .Bind(m => m.WithConnectionString(messagingConnectionString))
+                    .Bind(m => m.WithSqlProject(Path.Combine(root, "../../../../ManaChat.Databases.Messaging/ManaChat.Databases.Messaging.sqlproj")))
+                    //.Bind(m => m.GenerateTo(".Scripts/Messaging"))
+                    .Bind(m => m.CreateDatabaseIfNotExists())
+                    .Bind(m => m.Deploy());
+
+                if (!result.IsFlowing)
                 {
-                    Log.Error("Messaging database migration failed: {Error}", messagingResult.GetTear()); 
+                    Log.Error("Messaging migration failed: {Error}", result.GetTear());
                     if (failOnError)
                         return 1;
                 }
