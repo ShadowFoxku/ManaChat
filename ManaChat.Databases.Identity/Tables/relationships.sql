@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [identity].[relationships]
 (
 	[Id] BIGINT NOT NULL PRIMARY KEY IDENTITY(1,1),
-	[UserId] BIGINT NOT NULL REFERENCES [identity].[users](Id) ON DELETE CASCADE,
-	[RecipientUserId] BIGINT NOT NULL REFERENCES [identity].[users](Id) ON DELETE NO ACTION,
+	[UserId] BIGINT NOT NULL FOREIGN KEY REFERENCES [identity].[users](Id) ON DELETE CASCADE,
+	[RecipientUserId] BIGINT NOT NULL FOREIGN KEY REFERENCES [identity].[users](Id) ON DELETE NO ACTION,
 	[Relationship] INT NOT NULL,
 	[Bookmarked] BIT NOT NULL
 )
