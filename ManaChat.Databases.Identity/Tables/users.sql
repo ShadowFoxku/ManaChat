@@ -4,7 +4,8 @@
 	[Username] NVARCHAR(256) NOT NULL,
 	[Email] NVARCHAR(256) NULL,
 	[PhoneNumber] NVARCHAR(20) NULL,
-	[PasswordHash] VARCHAR(MAX) NULL,
+	[PasswordHash] BINARY(32) NULL,
+	[PasswordSalt] BINARY(16) NULL,
 	[ServerId] BIGINT NULL,
 	[Deleted] BIT NOT NULL DEFAULT 0
 )

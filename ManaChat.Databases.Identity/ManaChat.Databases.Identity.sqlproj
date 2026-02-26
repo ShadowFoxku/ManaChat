@@ -81,6 +81,8 @@
     <Build Include="Tables\sessions.sql" />
     <Build Include="StoredProcedures\usp_session_get_by_token.sql" />
     <Build Include="StoredProcedures\usp_session_save.sql" />
+    <Build Include="StoredProcedures\usp_user_verify_details_available.sql" />
+    <Build Include="StoredProcedures\usp_user_search_by_username.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyLoader.cs" />

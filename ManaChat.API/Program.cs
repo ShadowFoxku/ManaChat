@@ -26,6 +26,15 @@ builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 
 builder.Services.AddScoped<IAuthenticatedUserDetails, AuthenticatedUserDetails>();
 
+builder.Services.AddControllers(options =>
+{
+    options.Conventions.Add(new ApplyFromBodyConvention());
+})
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,7 +51,6 @@ app.MapControllers();
 
 app.UseMiddleware<ErrorSafetyMiddleware>();
 app.UseMiddleware<EnforceConsumerVersionMiddleware>();
-app.UseMiddleware<ApplyFromBodyConvention>();
 app.UseMiddleware<IdentityValidationMiddleware>();
 
 app.Run();

@@ -5,7 +5,7 @@
         public long Id { get; set; }
         public string Username { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public long ExternalServerId { get; set; }
+        public long? ExternalServerId { get; set; }
         public bool Deleted { get; set; }
     }
 

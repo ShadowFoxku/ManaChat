@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [identity].[usp_user_get_by_username]
+﻿CREATE PROCEDURE [identity].[usp_user_search_by_username]
 	@Username NVARCHAR(256)
 AS
 BEGIN
@@ -16,7 +16,7 @@ BEGIN
 		SET @UserId = (
 			SELECT Id 
 			FROM [identity].[users]
-			WHERE Email LIKE @Username
+			WHERE Username LIKE @Username + '%'
 			AND Deleted = 0
 		);
 	END

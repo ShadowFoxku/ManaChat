@@ -14,23 +14,41 @@ namespace ManaChat.Identity.Services
         private readonly IUsersRepository UserRepository = userRepo;
         private readonly IRuneReaderManager ReaderManager = readerManager;
 
-        public Task<Ritual<User>> CreateUser(string username, string email = "")
+        public Task<Ritual<bool>> AreDetailsAvailable(string username, string email, string phoneNumber)
+        {
+            return UserRepository.AreDetailsAvailable(username, email, phoneNumber);
+        }
+
+        public Task<Ritual<User>> SearchUserByUsername(string username)
+        {
+            return UserRepository.SearchUserByUsername(username);
+        }
+
+        public async Task<Ritual<User>> CreateUser(string username, string email = "", string phoneNumber = "")
         {
             var user = new UserInternal
             {
                 Username = username,
                 Email = email,
+                PhoneNumber = phoneNumber,
             };
 
-            return ReaderManager.RunInTransactionAsync(DatabaseConstants.IdentityDatabaseKey, () =>
-            {
-                return UserRepository.SaveUser(user).BindAsync(async (savedUser) =>
+            return await AreDetailsAvailable(username, email, phoneNumber).BindAsync(async (res) =>
                 {
-                    var identityResult = await CreateUserIdentity(savedUser.Id, savedUser.Username);
+                    if (!res)
+                        return Ritual<User>.Tear("Username, email, or phone number is already in use.");
 
-                    return identityResult.Map(_ => savedUser.ToUser());
-                });
-            });
+                    return await ReaderManager.RunInTransactionAsync(DatabaseConstants.IdentityDatabaseKey, async () =>
+                    {
+                        return await UserRepository.SaveUser(user).BindAsync(async (savedUser) =>
+                        {
+                            var identityResult = await CreateUserIdentity(savedUser.Id, savedUser.Username);
+
+                            return identityResult.Map(_ => savedUser.ToUser());
+                        });
+                    });
+                }
+            );
         }
 
         public Task<Ritual<UserIdentity>> CreateUserIdentity(long userId, string name)
@@ -43,6 +61,11 @@ namespace ManaChat.Identity.Services
             };
 
             return UserRepository.SaveUserIdentity(identity);
+        }
+
+        public Task<Ritual<(byte[] pw, byte[] s)>> GetUserPasswordAndSalt(string username)
+        {
+            return UserRepository.GetUserByUsername(username).BindAsync((user) => Ritual<(byte[] pw, byte[] s)>.Flow((user.PasswordHash, user.PasswordSalt)));
         }
 
         public Task<Ritual<bool>> DeleteUser(long id)
@@ -76,11 +99,6 @@ namespace ManaChat.Identity.Services
         public Task<Ritual<User>> GetUser(long id)
         {
             return UserRepository.GetUser(id).BindAsync((user) => user.ToUser().ToRitual());
-        }
-
-        public Task<Ritual<User>> GetUserByUsername(string username)
-        {
-            return UserRepository.GetUserByUsername(username);
         }
 
         public Task<Ritual<List<UserIdentity>>> GetUserIdentities(long userId)
@@ -129,7 +147,7 @@ namespace ManaChat.Identity.Services
             {
                 rel.RelationshipType = relationType;
                 rel.Bookmarked = bookmarked;
-                return rel.ToRitual();
+                return UserRepository.SaveUserRelationship(rel);
             });
         }
 
@@ -144,9 +162,9 @@ namespace ManaChat.Identity.Services
             });
         }
 
-        public Task<Ritual<bool>> UpdateUserPassword(long userId, string newHash)
+        public Task<Ritual<bool>> UpdateUserPassword(long userId, byte[] newHash, byte[] passwordSalt)
         {
-            return UserRepository.UpdateUserPassword(userId, newHash);
+            return UserRepository.UpdateUserPassword(userId, newHash, passwordSalt);
         }
     }
 }

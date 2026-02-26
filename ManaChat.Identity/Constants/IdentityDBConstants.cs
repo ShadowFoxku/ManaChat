@@ -7,11 +7,13 @@
         {
             public const string GetUserById = $"{Schema}.usp_user_get_by_id";
             public const string GetUserByUsername = $"{Schema}.usp_user_get_by_username";
+            public const string SearchUserByUsername = $"{Schema}.usp_user_search_by_username";
             public const string SaveUser = $"{Schema}.usp_user_save";
             public const string UpdateUserPassword = $"{Schema}.usp_user_save_password";
             public const string DeleteUser = $"{Schema}.usp_user_delete";
             public const string GetUserSessionByToken = $"{Schema}.usp_session_get_by_token";
             public const string UpdateUserSession = $"{Schema}.usp_session_save";
+            public const string VerifyDetailsAvailable = $"{Schema}.usp_user_verify_details_available";
 
             public const string GetUserIdentitiesForUser = $"{Schema}.usp_identities_get_for_user";
             public const string GetUserIdentity = $"{Schema}.usp_identity_get";

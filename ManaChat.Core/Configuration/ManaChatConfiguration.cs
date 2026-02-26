@@ -3,5 +3,6 @@
     public class ManaChatConfiguration
     {
         public UserConfig Users { get; set; } = new UserConfig();
+        public EncryptionSettings Encryption { get; set; } = new EncryptionSettings();
     }
 }

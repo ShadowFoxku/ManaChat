@@ -10,6 +10,7 @@ BEGIN
 		u.Email,
 		u.PhoneNumber,
 		u.PasswordHash,
+		u.PasswordSalt,
 		u.ServerId
 	FROM [identity].[users] u
 	WHERE u.Id = @UserId;

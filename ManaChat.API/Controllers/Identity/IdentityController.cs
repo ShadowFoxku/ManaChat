@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ManaChat.API.Controllers
+namespace ManaChat.API.Controllers.Identity
 {
     [ApiController]
     [Route("api/v1/identity")]

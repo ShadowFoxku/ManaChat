@@ -1,5 +1,4 @@
-﻿using ManaChat.Core.Constants;
-using ManaChat.Core.Enums.Identity;
+﻿using ManaChat.Core.Enums.Identity;
 using ManaChat.Core.Models.Identity;
 using ManaChat.Identity.Constants;
 using ManaChat.Identity.Models;
@@ -11,65 +10,73 @@ using System.Data;
 
 namespace ManaChat.Identity.Repositories
 {
-    public class UsersRepository(IRuneReaderManager runeFactory) : IUsersRepository
+    public class UsersRepository(IRuneReaderManager runeFactory) : IdentityRepositoryBase(runeFactory), IUsersRepository
     {
-        private IRitualRuneReader _runeReader = null!;
-
         public async Task<Ritual<UserInternal>> GetUser(long id)
         {
-            var reader = await GetRuneReaderAsync();
-            return await reader.QuerySingleAsync<UserInternal>(IdentityDBConstants.StoredProcedures.GetUserById, CommandType.StoredProcedure, new { Id = id });
+            await using var reader = await GetRuneReaderAsync();
+            return await reader.QuerySingleAsync<UserInternal>(IdentityDBConstants.StoredProcedures.GetUserById, CommandType.StoredProcedure, new { UserId = id });
         }
 
         public async Task<Ritual<UserInternal>> SaveUser(UserInternal user)
         {
-            var reader = await GetRuneReaderAsync();
+            await using var reader = await GetRuneReaderAsync();
 
-            return (await reader.QuerySingleAsync<long>(IdentityDBConstants.StoredProcedures.SaveUser, CommandType.StoredProcedure, new
+            var res = (await reader.QuerySingleAsync<long>(IdentityDBConstants.StoredProcedures.SaveUser, CommandType.StoredProcedure, new
             {
                 user.Id,
                 user.Username,
                 user.Email,
-                user.ExternalServerId
+                user.PhoneNumber,
+                ServerId = user.ExternalServerId
             })).Map(uId =>
-             {
-                 if (user.Id == 0) 
+            {
+                if (user.Id == 0)
                     user.Id = uId;
-                 return user;
-             });
+                return user;
+            });
+
+            return res;
         }
 
-        public async Task<Ritual<bool>> UpdateUserPassword(long id, string passwordHash)
+        public async Task<Ritual<bool>> UpdateUserPassword(long id, byte[] passwordHash, byte[] passwordSalt)
         {
-            var reader = await GetRuneReaderAsync();
+            await using var reader = await GetRuneReaderAsync();
             return (await reader.ExecuteAsync(IdentityDBConstants.StoredProcedures.UpdateUserPassword, CommandType.StoredProcedure, new
             {
-                Id = id,
-                PasswordHash = passwordHash
+                UserId = id,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt
             })).Map(result => result > 0);
         }
 
-        public async Task<Ritual<User>> GetUserByUsername(string username)
+        public async Task<Ritual<UserInternal>> GetUserByUsername(string username)
         {
-            var reader = await GetRuneReaderAsync();
-            return await reader.QuerySingleOrDefaultAsync<User>(IdentityDBConstants.StoredProcedures.GetUserByUsername, CommandType.StoredProcedure, new { Username = username });
+            await using var reader = await GetRuneReaderAsync();
+            return await reader.QuerySingleOrDefaultAsync<UserInternal>(IdentityDBConstants.StoredProcedures.GetUserByUsername, CommandType.StoredProcedure, new { Username = username });
+        }
+
+        public async Task<Ritual<User>> SearchUserByUsername(string username)
+        {
+            await using var reader = await GetRuneReaderAsync();
+            return await reader.QuerySingleOrDefaultAsync<User>(IdentityDBConstants.StoredProcedures.SearchUserByUsername, CommandType.StoredProcedure, new { Username = username });
         }
 
         public async Task<Ritual<bool>> DeleteUser(long id)
         {
-            var reader = await GetRuneReaderAsync();
+            await using var reader = await GetRuneReaderAsync();
             return (await reader.ExecuteAsync(IdentityDBConstants.StoredProcedures.DeleteUser, CommandType.StoredProcedure, new { Id = id })).Map(result => result > 0);
         }
 
         public async Task<Ritual<Session>> GetUserSession(string token)
         {
-            var reader = await GetRuneReaderAsync();
+            await using var reader = await GetRuneReaderAsync();
             return await reader.QuerySingleOrDefaultAsync<Session>(IdentityDBConstants.StoredProcedures.GetUserSessionByToken, CommandType.StoredProcedure, new { Token = token });
         }
 
         public async Task<Ritual<bool>> UpdateUserSession(long sessionId, long userId, string token, DateTime expiresAt)
         {
-            var reader = await GetRuneReaderAsync();
+            await using var reader = await GetRuneReaderAsync();
             return (await reader.ExecuteAsync(IdentityDBConstants.StoredProcedures.UpdateUserSession, CommandType.StoredProcedure, new
             {
                 Id = sessionId,
@@ -82,19 +89,19 @@ namespace ManaChat.Identity.Repositories
 
         public async Task<Ritual<List<UserIdentity>>> GetUserIdentities(long userId)
         {
-            var reader = await GetRuneReaderAsync();
+            await using var reader = await GetRuneReaderAsync();
             return await reader.QueryMultipleAsync<UserIdentity>(IdentityDBConstants.StoredProcedures.GetUserIdentitiesForUser, CommandType.StoredProcedure, new { UserId = userId });
         }
 
         public async Task<Ritual<UserIdentity>> GetUserIdentity(long userId, long id)
         {
-            var reader = await GetRuneReaderAsync();
+            await using var reader = await GetRuneReaderAsync();
             return await reader.QuerySingleAsync<UserIdentity>(IdentityDBConstants.StoredProcedures.GetUserIdentity, CommandType.StoredProcedure, new { UserId = userId, Id = id });
         }
 
         public async Task<Ritual<UserIdentity>> SaveUserIdentity(UserIdentity identity)
         {
-            var reader = await GetRuneReaderAsync();
+            await using var reader = await GetRuneReaderAsync();
             return (await reader.QuerySingleAsync<long>(IdentityDBConstants.StoredProcedures.SaveUserIdentity, CommandType.StoredProcedure, new
             {
                 identity.Id,
@@ -111,20 +118,20 @@ namespace ManaChat.Identity.Repositories
 
         public async Task<Ritual<bool>> DeleteUserIdentity(long id)
         {
-            var reader = await GetRuneReaderAsync();
+            await using var reader = await GetRuneReaderAsync();
             return (await reader.ExecuteAsync(IdentityDBConstants.StoredProcedures.DeleteUserIdentity, CommandType.StoredProcedure, new { Id = id }))
                 .Map(result => result > 0);
         }
 
         public async Task<Ritual<List<UserRelationship>>> GetUserRelationships(long userId)
         {
-            var reader = await GetRuneReaderAsync();
+            await using var reader = await GetRuneReaderAsync();
             return await reader.QueryMultipleAsync<UserRelationship>(IdentityDBConstants.StoredProcedures.GetUserRelationships, CommandType.StoredProcedure, new { UserId = userId });
         }
 
         public async Task<Ritual<UserRelationship>> SaveUserRelationship(UserRelationship relationship)
         {
-            var reader = await GetRuneReaderAsync();
+            await using var reader = await GetRuneReaderAsync();
             return (await reader.QuerySingleAsync<long>(IdentityDBConstants.StoredProcedures.SaveUserRelationship, CommandType.StoredProcedure, new
             {
                 relationship.Id,
@@ -142,7 +149,7 @@ namespace ManaChat.Identity.Repositories
 
         public async Task<Ritual<UserRelationship>> GetRelationshipBetweenUsers(long baseUserId, long recipientUserId)
         {
-            var reader = await GetRuneReaderAsync();
+            await using var reader = await GetRuneReaderAsync();
 
             return await reader.QuerySingleAsync<UserRelationship>(IdentityDBConstants.StoredProcedures.GetUserRelationships, CommandType.StoredProcedure,
                 new
@@ -166,10 +173,16 @@ namespace ManaChat.Identity.Repositories
                 });
         }
 
-        private async Task<IRitualRuneReader> GetRuneReaderAsync()
+        public async Task<Ritual<bool>> AreDetailsAvailable(string username, string email, string phoneNumber)
         {
-            _runeReader ??= await runeFactory.GetRitualRuneReaderAsync(DatabaseConstants.IdentityDatabaseKey);
-            return _runeReader;
+            await using var reader = await GetRuneReaderAsync();
+            var result = await reader.QuerySingleAsync<int>(IdentityDBConstants.StoredProcedures.VerifyDetailsAvailable, CommandType.StoredProcedure, new
+            {
+                Username = username,
+                Email = string.IsNullOrWhiteSpace(email) ? null : email,
+                PhoneNumber = string.IsNullOrWhiteSpace(phoneNumber) ? null : phoneNumber
+            });
+            return result.Map((res) => res > 0);
         }
     }
 }

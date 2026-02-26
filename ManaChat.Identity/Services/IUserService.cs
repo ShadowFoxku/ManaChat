@@ -7,11 +7,13 @@ namespace ManaChat.Identity.Services
     public interface IUserService
     {
         Task<Ritual<User>> GetUser(long id);
-        Task<Ritual<User>> GetUserByUsername(string username);
-        Task<Ritual<User>> CreateUser(string username, string email = "");
+        Task<Ritual<User>> CreateUser(string username, string email = "", string phoneNumber = "");
         Task<Ritual<User>> UpdateUser(long userId, string username, string email);
-        Task<Ritual<bool>> UpdateUserPassword(long userId, string newHash);
+        Task<Ritual<bool>> UpdateUserPassword(long userId, byte[] newHash, byte[] passwordSalt);
         Task<Ritual<bool>> DeleteUser(long id);
+        Task<Ritual<bool>> AreDetailsAvailable(string username, string email, string phoneNumber);
+        Task<Ritual<(byte[] pw, byte[] s)>> GetUserPasswordAndSalt(string userName);
+        Task<Ritual<User>> SearchUserByUsername(string username);
 
         Task<Ritual<UserWithIdentity>> GetUserWithIdentities(long id);
         Task<Ritual<UserIdentity>> CreateUserIdentity(long userId, string name);
