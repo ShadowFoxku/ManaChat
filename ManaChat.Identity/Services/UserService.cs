@@ -72,6 +72,11 @@ namespace ManaChat.Identity.Services
             return UserRepository.GetUserByUsername(username).BindAsync((user) => Ritual<(long, string)>.Flow((user.Id, user.PasswordHash)));
         }
 
+        public Task<Ritual<bool>> UpdateUserSession(long sessionId, long userId, string token, DateTimeOffset expiresAt)
+        {
+            return UserRepository.UpdateUserSession(sessionId, userId, token, expiresAt);
+        }
+
         public Task<Ritual<bool>> DeleteUser(long id)
         {
             return ReaderManager.RunInTransactionAsync(DatabaseConstants.IdentityDatabaseKey, () =>

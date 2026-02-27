@@ -14,6 +14,7 @@ namespace ManaChat.Identity.Services
         Task<Ritual<bool>> AreDetailsAvailable(string username, string email, string phoneNumber);
         Task<Ritual<(long, string)>> GetUserPassword(string userName);
         Task<Ritual<User>> SearchUserByUsername(string username);
+        Task<Ritual<bool>> UpdateUserSession(long sessionId, long userId, string token, DateTimeOffset expiresAt);
 
         Task<Ritual<UserWithIdentity>> GetUserWithIdentities(long id);
         Task<Ritual<UserIdentity>> CreateUserIdentity(long userId, string name);

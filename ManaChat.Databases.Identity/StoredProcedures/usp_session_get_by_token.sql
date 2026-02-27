@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [identity].[usp_session_get_by_token]
-	@Token VARCHAR(512)
+	@Token CHAR(64)
 AS
 BEGIN
 	SET NOCOUNT ON;

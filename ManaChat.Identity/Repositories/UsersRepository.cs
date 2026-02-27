@@ -73,7 +73,7 @@ namespace ManaChat.Identity.Repositories
             return await reader.QuerySingleOrDefaultAsync<Session>(IdentityDBConstants.StoredProcedures.GetUserSessionByToken, CommandType.StoredProcedure, new { Token = token });
         }
 
-        public async Task<Ritual<bool>> UpdateUserSession(long sessionId, long userId, string token, DateTime expiresAt)
+        public async Task<Ritual<bool>> UpdateUserSession(long sessionId, long userId, string token, DateTimeOffset expiresAt)
         {
             await using var reader = await GetRuneReaderAsync();
             return (await reader.ExecuteAsync(IdentityDBConstants.StoredProcedures.UpdateUserSession, CommandType.StoredProcedure, new

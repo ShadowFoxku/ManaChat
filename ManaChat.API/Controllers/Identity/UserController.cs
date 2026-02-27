@@ -1,6 +1,7 @@
 ﻿using ManaChat.API.Controllers.Identity.Models;
 using ManaChat.API.Helpers;
 using ManaChat.Core.Configuration;
+using ManaChat.Core.Models.Auth;
 using ManaChat.Identity.Services;
 using ManaFox.Core.Flow;
 using ManaFox.Extensions.Flow;
@@ -12,7 +13,7 @@ namespace ManaChat.API.Controllers.Identity
 {
     [ApiController]
     [Route("api/v1/user")]
-    public class UserController(IUserService userService, IOptions<ManaChatConfiguration> config) : ControllerBase
+    public class UserController(IUserService userService, IOptions<ManaChatConfiguration> config, IAuthenticatedUserDetails user) : ControllerBase
     {
         [HttpPost]
         [AllowAnonymous]
@@ -54,16 +55,45 @@ namespace ManaChat.API.Controllers.Identity
                         await userService.UpdateUserPassword(result.userId, newHash); 
                     }
                         
-                    return Ritual<bool>.Flow(result.isValid);
+                    return Ritual<(bool isValid, long userId)>.Flow((result.isValid, result.userId));
+                }).BindAsync(async (result) =>
+                {
+                    if (result.isValid)
+                    {
+                        var token = TokenHelpers.GenerateNewToken();
+                        var expiry = DateTimeOffset.UtcNow.Add(config.Value.TokenSettings.GetExpiryTimeSpan());
+                        var res = await userService.UpdateUserSession(0, result.userId, token.hash, expiry);
+                        if (!res.IsFlowing)
+                            return Ritual<(string token, DateTimeOffset expiry)>.Tear("Unexpected issue with token assignment. Please try again, or contact support if this persists.");
+                        return Ritual<(string token, DateTimeOffset expiry)>.Flow((token.token, expiry));
+                    }
+
+                    return Ritual<(string token, DateTimeOffset expiry)>.Tear("Invalid username or password.");
                 });
-               
+
+            if (res.IsFlowing && !string.IsNullOrWhiteSpace(res.GetValue().token))
+            {
+                var (token, expiry) = res.GetValue();
+                if (user.UsesCookies)
+                {
+                    Response.Cookies.Append(Clients.ManaChatWebClient.CookieName, token, new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Lax,
+                        Expires = expiry
+                    });
+
+                    return Ok(LoginResponse.Success("You are now logged in! Welcome!"));
+                }
+
+                return Ok(LoginResponse.Success(token, expiry, "You are now logged in! Please use this token in your header to access resources."));
+            }
+
             if (res.IsTorn)
-                return BadRequest($"Unable to log in. {res.GetTear()!.Message}");
+                return BadRequest(LoginResponse.Fail($"Unable to log in. {res.GetTear()!.Message}"));
 
-            if (res.IsFlowing && res.GetValue())
-                return Ok("Login successful!");
-
-            return BadRequest("Invalid username or password.");
+            return BadRequest(LoginResponse.Fail("Unable to log in. Please validate all fields, then try again."));
         }
     }
 }

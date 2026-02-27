@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [identity].[usp_session_save]
 	@Id BIGINT,
 	@UserId BIGINT,
-	@Token VARCHAR(512),
+	@Token CHAR(64),
 	@StartedAt DATETIMEOFFSET,
 	@ExpiresAt DATETIMEOFFSET
 AS

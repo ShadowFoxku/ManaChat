@@ -12,10 +12,11 @@
 
     public abstract class ManaChatWebBasedClient : ManaChatClient
     {
+        public const string CookieName = "ManaChatAuth";
         public override bool UsesCookies => true;
         public override string GetClientToken(HttpRequest request)
         {
-            return request.Cookies.TryGetValue("X-ManaChat-Client-Token", out var token) ? token.ToString() : string.Empty;
+            return request.Cookies.TryGetValue(CookieName, out var token) ? token.ToString() : string.Empty;
         }
     }
 
