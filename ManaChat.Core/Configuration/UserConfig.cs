@@ -9,7 +9,9 @@
     public class UserAccountOptions
     {
         public bool RequireEmail { get; set; } = false;
-        public bool RequireSMS { get; set; } = false;
+        public bool AcceptEmail { get; set; } = true;
+        public bool RequirePhoneNumber { get; set; } = false;
+        public bool AcceptPhoneNumber { get; set; } = false;
     }
 
     public class UserIdentityOptions

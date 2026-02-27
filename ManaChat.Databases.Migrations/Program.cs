@@ -19,6 +19,9 @@ internal class Program
             failOnError = args.Contains("--stop-on-error", StringComparer.OrdinalIgnoreCase);
         }
 
+        var loaderIdentity = typeof(ManaChat.Databases.Identity.AssemblyLoader).Assembly;
+        var loaderMessaging = typeof(ManaChat.Databases.Messaging.AssemblyLoader).Assembly;
+
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .WriteTo.Console()

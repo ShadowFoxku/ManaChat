@@ -18,12 +18,19 @@ namespace ManaChat.API.Controllers.Identity
         [AllowAnonymous]
         public async Task<IActionResult> Register(SignUpRequest request)
         {
-            var (pwordBytes, saltBytes) = PasswordHelpers.HashPassword(request.Password, config.Value.Encryption.Passwords);
+            var pword = PasswordHelpers.HashPassword(request.Password, config.Value.Encryption.Passwords);
+            var email = config.Value.Users.AccountOptions.AcceptEmail ? request.Email : string.Empty;
+            var phone = config.Value.Users.AccountOptions.AcceptPhoneNumber ? request.PhoneNumber : string.Empty;
 
-            var result = await userService.CreateUser(request.Username, request.Email)
-                .BindAsync((user) => userService.UpdateUserPassword(user.Id, pwordBytes, saltBytes));
+            if (config.Value.Users.AccountOptions.RequireEmail && string.IsNullOrWhiteSpace(email))
+                return BadRequest("Email is required but was not provided.");
 
-            if (result.IsFlowing && result.GetValue())
+            if (config.Value.Users.AccountOptions.RequirePhoneNumber && string.IsNullOrWhiteSpace(phone))
+                return BadRequest("Phone number is required but was not provided.");
+
+            var result = await userService.CreateUser(request.Username, email, phone, pword);
+
+            if (result.IsFlowing)
                 return Ok("Creation successful! Please log in to continue.");
 
             return BadRequest($"Unable to create user. {result.GetTear()!.Message}");
@@ -33,10 +40,21 @@ namespace ManaChat.API.Controllers.Identity
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginRequest request)
         {
-            var res = (await userService.GetUserPasswordAndSalt(request.Username))
+            var res = await (await userService.GetUserPassword(request.Username))
                 .Bind((result) => 
                 {
-                    return Ritual<bool>.Flow(PasswordHelpers.VerifyPassword(request.Password, result.pw, result.s, config.Value.Encryption.Passwords));
+                    var isValid = PasswordHelpers.VerifyPassword(request.Password, result.Item2, config.Value.Encryption.Passwords);
+                    return Ritual<(bool isValid, bool needsReHash, long userId)>.Flow((isValid.isValid, isValid.reHash, result.Item1));
+                })
+                .BindAsync(async (result) =>
+                {
+                    if (result.needsReHash)
+                    {
+                        var newHash = PasswordHelpers.HashPassword(request.Password, config.Value.Encryption.Passwords);
+                        await userService.UpdateUserPassword(result.userId, newHash); 
+                    }
+                        
+                    return Ritual<bool>.Flow(result.isValid);
                 });
                
             if (res.IsTorn)

@@ -39,14 +39,13 @@ namespace ManaChat.Identity.Repositories
             return res;
         }
 
-        public async Task<Ritual<bool>> UpdateUserPassword(long id, byte[] passwordHash, byte[] passwordSalt)
+        public async Task<Ritual<bool>> UpdateUserPassword(long id, string pwHash)
         {
             await using var reader = await GetRuneReaderAsync();
             return (await reader.ExecuteAsync(IdentityDBConstants.StoredProcedures.UpdateUserPassword, CommandType.StoredProcedure, new
             {
                 UserId = id,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt
+                PasswordHash = pwHash
             })).Map(result => result > 0);
         }
 

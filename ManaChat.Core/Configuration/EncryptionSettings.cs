@@ -3,22 +3,12 @@
     public class EncryptionSettings
     {
         public PasswordSettings Passwords { get; set; } = new PasswordSettings();
-
-        public bool Validate()
-        {
-            return Passwords.Validate();
-        }
     }
 
     public class EncryptionKeyIVPair
     {
         public string Key { get; set; } = string.Empty;
         public string IV { get; set;  } = string.Empty;
-
-        public bool Valid()
-        {
-            return !string.IsNullOrEmpty(Key) && !string.IsNullOrEmpty(IV);
-        }
     }
 
     /// <summary>
@@ -33,9 +23,22 @@
         public int Iterations { get; set; } = 4;
         public int MemorySize { get; set; } = 65536; // 64mb
 
-        public bool Validate()
+        /// <summary>
+        /// This should be a base64 encoded string. 
+        /// If you set the pepper, it is HIGHLY recommended to set it to a value that is not stored in the same place as the rest of the configuration, 
+        /// such as an environment variable or a secret manager. The pepper adds an additional layer of security by being a secret value that is combined 
+        /// with the password before hashing, making it more resistant to attacks even if the database is compromised. 
+        /// Changing the pepper will invalidate all existing password hashes, so it should be set carefully and not changed frequently. 
+        /// If you do need to change it, make sure to have a plan for rehashing existing passwords with the new pepper.
+        /// </summary>
+        /// <remarks>ManaChat__Encryption__Passwords__Pepper is the environment variable that can be used to set this value.</remarks>
+        public string Pepper { get; set; } = string.Empty;
+
+        public bool Matches(PasswordSettings other)
         {
-            return DegreeOfParallelism > 0 && Iterations > 0 && MemorySize > 0;
+            return DegreeOfParallelism == other.DegreeOfParallelism &&
+                   Iterations == other.Iterations &&
+                   MemorySize == other.MemorySize;
         }
     }
 }

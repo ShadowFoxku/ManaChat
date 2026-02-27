@@ -24,7 +24,7 @@ namespace ManaChat.Identity.Services
             return UserRepository.SearchUserByUsername(username);
         }
 
-        public async Task<Ritual<User>> CreateUser(string username, string email = "", string phoneNumber = "")
+        public async Task<Ritual<User>> CreateUser(string username, string email, string phoneNumber, string password)
         {
             var user = new UserInternal
             {
@@ -45,6 +45,10 @@ namespace ManaChat.Identity.Services
                             var identityResult = await CreateUserIdentity(savedUser.Id, savedUser.Username);
 
                             return identityResult.Map(_ => savedUser.ToUser());
+                        }).BindAsync(async (user) =>
+                        {
+                            await UpdateUserPassword(user.Id, password);
+                            return Ritual<User>.Flow(user);
                         });
                     });
                 }
@@ -63,9 +67,9 @@ namespace ManaChat.Identity.Services
             return UserRepository.SaveUserIdentity(identity);
         }
 
-        public Task<Ritual<(byte[] pw, byte[] s)>> GetUserPasswordAndSalt(string username)
+        public Task<Ritual<(long, string)>> GetUserPassword(string username)
         {
-            return UserRepository.GetUserByUsername(username).BindAsync((user) => Ritual<(byte[] pw, byte[] s)>.Flow((user.PasswordHash, user.PasswordSalt)));
+            return UserRepository.GetUserByUsername(username).BindAsync((user) => Ritual<(long, string)>.Flow((user.Id, user.PasswordHash)));
         }
 
         public Task<Ritual<bool>> DeleteUser(long id)
@@ -162,9 +166,9 @@ namespace ManaChat.Identity.Services
             });
         }
 
-        public Task<Ritual<bool>> UpdateUserPassword(long userId, byte[] newHash, byte[] passwordSalt)
+        public Task<Ritual<bool>> UpdateUserPassword(long userId, string pwHash)
         {
-            return UserRepository.UpdateUserPassword(userId, newHash, passwordSalt);
+            return UserRepository.UpdateUserPassword(userId, pwHash);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace ManaChat.Identity.Repositories
         Task<Ritual<UserInternal>> GetUser(long id);
         Task<Ritual<UserInternal>> GetUserByUsername(string username);
         Task<Ritual<UserInternal>> SaveUser(UserInternal user);
-        Task<Ritual<bool>> UpdateUserPassword(long id, byte[] passwordHash, byte[] passwordSalt);
+        Task<Ritual<bool>> UpdateUserPassword(long id, string pwHash);
         Task<Ritual<bool>> DeleteUser(long id);
         Task<Ritual<bool>> UpdateUserSession(long sessionId, long userId, string token, DateTime expiresAt);
         Task<Ritual<Session>> GetUserSession(string token);
