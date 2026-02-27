@@ -82,6 +82,7 @@ namespace ManaChat.Identity.Services
         public Task<Ritual<User>> GetUser(long id)
         {
             return UserRepository.GetUser(id).BindAsync((user) => user.ToUser().ToRitual());
+        }
         
 
         public Task<Ritual<User>> UpdateUser(long userId, string username, string email)

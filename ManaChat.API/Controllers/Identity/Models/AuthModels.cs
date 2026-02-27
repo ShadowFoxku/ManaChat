@@ -16,13 +16,13 @@
 
     public class LoginResponse
     {
-        public string State { get; set; }
-        public string Token { get; set; }
+        public string State { get; set; } = string.Empty;
+        public string Token { get; set; } = string.Empty;
         public DateTimeOffset Expiry { get; set; }
-        public string Message { get; set; }
+        public string Message { get; set; } = string.Empty;
 
-        public static LoginResponse Fail(string message) => new LoginResponse { State = "Failure", Message = message };
-        public static LoginResponse Success(string token, DateTimeOffset expiry, string message) => new LoginResponse
+        public static LoginResponse Fail(string message) => new() { State = "Failure", Message = message };
+        public static LoginResponse Success(string token, DateTimeOffset expiry, string message) => new()
         {
             State = "Success",
             Token = token,
@@ -30,10 +30,6 @@
             Message = message
         };
 
-        public static LoginResponse Success(string message) => new LoginResponse
-        {
-            State = "Success",
-            Message = message
-        };
+        public static LoginResponse Success(string message) => new() { State = "Success", Message = message };
     }
 }
