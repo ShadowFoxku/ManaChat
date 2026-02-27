@@ -5,12 +5,14 @@
         public abstract string FriendlyName { get; }
         public abstract string InternalName { get; }
         public abstract string Description { get; }
+        public abstract bool UsesCookies { get; }
         public abstract string GetClientToken(HttpRequest request);
         public abstract ManaChatVersion MinimumSupportedVersion { get; }
     }
 
     public abstract class ManaChatWebBasedClient : ManaChatClient
     {
+        public override bool UsesCookies => true;
         public override string GetClientToken(HttpRequest request)
         {
             return request.Cookies.TryGetValue("X-ManaChat-Client-Token", out var token) ? token.ToString() : string.Empty;

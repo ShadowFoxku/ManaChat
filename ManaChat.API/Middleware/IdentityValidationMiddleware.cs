@@ -12,6 +12,8 @@ namespace ManaChat.API.Middleware
         public async Task Invoke(HttpContext context, IAuthenticatedUserDetails user, IUsersRepository userRepo)
         {
             var authedUser = user as AuthenticatedUserDetails ?? throw new Exception("Authenticated user details is not of type AuthenticatedUserDetails");
+            var client = ClientFetcher.GetFromHeaders(context.Request.Headers);
+            authedUser.UsesCookies = client.UsesCookies;
 
             if (IsEndpointAllowAnonymous(context))
             {
@@ -20,7 +22,6 @@ namespace ManaChat.API.Middleware
                 return;
             }
 
-            var client = ClientFetcher.GetFromHeaders(context.Request.Headers);
             var token = client.GetClientToken(context.Request);
             if (string.IsNullOrWhiteSpace(token))
             {

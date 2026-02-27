@@ -4,5 +4,6 @@
     {
         long? UserId { get; }
         bool IsAuthenticated { get; }
+        bool UsesCookies { get; }
     }
 }
