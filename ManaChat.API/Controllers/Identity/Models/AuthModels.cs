@@ -21,7 +21,6 @@
         public DateTimeOffset Expiry { get; set; }
         public string Message { get; set; } = string.Empty;
 
-        public static LoginResponse Fail(string message) => new() { State = "Failure", Message = message };
         public static LoginResponse Success(string token, DateTimeOffset expiry, string message) => new()
         {
             State = "Success",

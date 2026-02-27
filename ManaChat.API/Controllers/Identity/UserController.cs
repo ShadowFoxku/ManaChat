@@ -31,8 +31,8 @@ namespace ManaChat.API.Controllers.Identity
 
             var result = await userService.CreateUser(request.Username, email, phone, pword);
 
-            if (!IsRitualValid(result, out string msg))
-                return BadRequest($"Unable to create user. {msg}");
+            if (!IsRitualValid(result, message => $"Unable to create user. {message}", out var res))
+                return res;
 
             return Ok("Creation successful! Please log in to continue.");
         }
@@ -71,8 +71,8 @@ namespace ManaChat.API.Controllers.Identity
                     return Ritual<(string token, DateTimeOffset expiry)>.Tear("Invalid username or password.");
                 });
 
-            if (!IsRitualValid(res, out string message))
-                return BadRequest(LoginResponse.Fail($"Unable to log in. {message}"));
+            if (!IsRitualValid(res, message => $"Unable to log in. {message}", out var badRes))
+                return badRes;
 
             var (token, expiry) = res.GetValue();
             if (user.UsesCookies)

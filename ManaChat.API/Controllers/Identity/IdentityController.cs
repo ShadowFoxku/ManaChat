@@ -6,6 +6,7 @@ using ManaFox.Core.Flow;
 using ManaFox.Extensions.Flow;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.Net;
 
 namespace ManaChat.API.Controllers.Identity
 {
@@ -20,8 +21,8 @@ namespace ManaChat.API.Controllers.Identity
 
             var result = await identityService.GetUserIdentities(userId);
 
-            if (!IsRitualValid(result, out string message))
-                return BadRequest($"Unable to fetch Identities. {message}");
+            if (!IsRitualValid(result, message => $"Unable to fetch identities. {message}", out var res))
+                return res;
 
             return Ok(result.GetValue());
         }
@@ -39,8 +40,8 @@ namespace ManaChat.API.Controllers.Identity
                 var canCreate = (await identityService.GetUserIdentities(authedUser.UserId!.Value))
                     .Map((res) => res.Count < identityConfig.MaxIdentitiesPerUser);
 
-                if (!IsRitualValid(canCreate, out string msg))
-                    return BadRequest($"Unable to create identity. {msg}");
+                if (!IsRitualValid(canCreate, message => $"Unable to create identity. {message}", out var res))
+                    return res;
 
                 if (!canCreate.GetValue())
                     return BadRequest("You have reached the identity limit for this instance. Please delete or update existing identities, instead.");
@@ -48,8 +49,8 @@ namespace ManaChat.API.Controllers.Identity
 
             var identity = await identityService.CreateUserIdentity(authedUser.UserId!.Value, request.Name, request.IsDefault);
 
-            if (!IsRitualValid(identity, out string message))
-                return BadRequest($"Unable to create identity. {message}");
+            if (!IsRitualValid(identity, message => $"Unable to create identity. {message}", out var result))
+                return result;
 
             return Ok(identity.GetValue());
         }
@@ -63,14 +64,14 @@ namespace ManaChat.API.Controllers.Identity
                 .BindAsync(async (res) =>
                 {
                     if (res == null)
-                        return Ritual<bool>.Tear("User identity not found", "ID404");
+                        return Ritual<bool>.Tear(APITear("Identity not found", HttpStatusCode.NotFound));
 
                     return Ritual<bool>.Flow(true);
                 })
                 .BindAsync((_) => identityService.SaveUserIdentity(userId, id, request.Name, request.IsDefault));
 
-            if (!IsRitualValid(res, out string message))
-                return BadRequest($"Unable to update identity. {message}");
+            if (!IsRitualValid(res, message => $"Unable to update identity. {message}", out var result))
+                return result;
 
             return Ok(res.GetValue());
         }
