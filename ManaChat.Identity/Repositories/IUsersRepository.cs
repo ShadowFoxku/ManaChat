@@ -14,15 +14,6 @@ namespace ManaChat.Identity.Repositories
         Task<Ritual<bool>> UpdateUserSession(long sessionId, long userId, string token, DateTimeOffset expiresAt);
         Task<Ritual<Session>> GetUserSession(string token);
         Task<Ritual<bool>> AreDetailsAvailable(string username, string email, string phoneNumber);
-        Task<Ritual<User>> SearchUserByUsername(string username);
-
-        Task<Ritual<List<UserIdentity>>> GetUserIdentities(long userId);
-        Task<Ritual<UserIdentity>> SaveUserIdentity(UserIdentity identity);
-        Task<Ritual<bool>> DeleteUserIdentity(long id);
-        Task<Ritual<UserIdentity>> GetUserIdentity(long userid, long id);
-        
-        Task<Ritual<List<UserRelationship>>> GetUserRelationships(long userId);
-        Task<Ritual<UserRelationship>> GetRelationshipBetweenUsers(long baseUserId, long recipientUserId);
-        Task<Ritual<UserRelationship>> SaveUserRelationship(UserRelationship relationship);
+        Task<Ritual<List<User>>> SearchUserByUsername(string username);
     }
 }

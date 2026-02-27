@@ -13,17 +13,7 @@ namespace ManaChat.Identity.Services
         Task<Ritual<bool>> DeleteUser(long id);
         Task<Ritual<bool>> AreDetailsAvailable(string username, string email, string phoneNumber);
         Task<Ritual<(long, string)>> GetUserPassword(string userName);
-        Task<Ritual<User>> SearchUserByUsername(string username);
+        Task<Ritual<List<User>>> SearchUserByUsername(string username);
         Task<Ritual<bool>> UpdateUserSession(long sessionId, long userId, string token, DateTimeOffset expiresAt);
-
-        Task<Ritual<UserWithIdentity>> GetUserWithIdentities(long id);
-        Task<Ritual<UserIdentity>> CreateUserIdentity(long userId, string name);
-        Task<Ritual<UserIdentity>> SaveUserIdentity(long userId, long id, string name, bool isDefault);
-        Task<Ritual<List<UserIdentity>>> GetUserIdentities(long userId);
-        Task<Ritual<bool>> DeleteUserIdentity(long id);
-
-        Task<Ritual<List<UserRelationship>>> GetRelationshipsForUser(long userId);
-        Task<Ritual<UserRelationship>> GetRelationshipBetweenUsers(long baseUserId, long recipientUserId);
-        Task<Ritual<UserRelationship>> SaveUserRelationship(long baseUser, long recipientUser, RelationshipType relationType, bool bookmarked);
     }
 }
