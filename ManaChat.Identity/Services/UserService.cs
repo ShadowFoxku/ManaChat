@@ -43,7 +43,7 @@ namespace ManaChat.Identity.Services
                     {
                         return await UserRepository.SaveUser(user).BindAsync(async (savedUser) =>
                         {
-                            var identityResult = await IdentityService.CreateUserIdentity(savedUser.Id, savedUser.Username);
+                            var identityResult = await IdentityService.CreateUserIdentity(savedUser.Id, savedUser.Username, true);
 
                             return identityResult.Map(_ => savedUser.ToUser());
                         }).BindAsync(async (user) =>

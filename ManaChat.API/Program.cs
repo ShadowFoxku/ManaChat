@@ -20,8 +20,13 @@ builder.Services.AddRuneReaderConfig(DatabaseConstants.MessagingDatabaseKey, bui
 builder.Services.Configure<ManaChatConfiguration>(builder.Configuration.GetSection("ManaChat"));
 builder.Services.AddScoped<IRuneReaderManager, RuneReaderManager>();
 
+// identity
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRelationshipService, RelationshipService>();
+builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<IRelationshipRepository, RelationshipRepository>();
+builder.Services.AddScoped<IIdentityRepository, IdentityRepository>();
 
 builder.Services.AddScoped<IAuthenticatedUserDetails, AuthenticatedUserDetails>();
 

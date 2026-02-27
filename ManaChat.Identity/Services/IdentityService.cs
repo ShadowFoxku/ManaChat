@@ -27,30 +27,14 @@ namespace ManaChat.Identity.Services
 
         public Task<Ritual<UserIdentity>> SaveUserIdentity(long userId, long id, string name, bool isDefault)
         {
-            return ReaderManager.RunInTransactionAsync(DatabaseConstants.IdentityDatabaseKey, () =>
-                IdentityRepository.GetUserIdentity(userId, id).BindAsync((identity) =>
-                {
-                    identity.Name = name;
-                    identity.Default = isDefault;
-                    if (isDefault != identity.Default)
-                    {   // changing default - remove others
-                        return IdentityRepository.GetUserIdentities(userId).BindAsync(async identities =>
-                        {
-                            var defaults = identities.Where(x => x.Default);
-                            foreach (var d in defaults)
-                            {   // should only be one, but this enforces the change
-                                d.Default = false;
-                                var ri = await IdentityRepository.SaveUserIdentity(d);
-                                if (!ri.IsFlowing)
-                                    return Ritual<bool>.Tear(ri.GetTear()!);
-                            }
-                            return Ritual<bool>.Flow(true);
-                        }).BindAsync((_) => IdentityRepository.SaveUserIdentity(identity));
-                    }
-
-                    return IdentityRepository.SaveUserIdentity(identity);
-                })
-            );
+            var userIdentity = new UserIdentity()
+            {
+                UserId = userId,
+                Id = id,
+                Name = name,
+                Default = isDefault
+            };
+            return IdentityRepository.SaveUserIdentity(userIdentity);
         }
 
         public Task<Ritual<bool>> DeleteUserIdentity(long id)
@@ -58,16 +42,21 @@ namespace ManaChat.Identity.Services
             return IdentityRepository.DeleteUserIdentity(id);
         }
 
-        public Task<Ritual<UserIdentity>> CreateUserIdentity(long userId, string name)
+        public Task<Ritual<UserIdentity>> CreateUserIdentity(long userId, string name, bool isDefault)
         {
             var identity = new UserIdentity
             {
                 Name = name,
                 UserId = userId,
-                Default = false
+                Default = isDefault
             };
 
             return IdentityRepository.SaveUserIdentity(identity);
+        }
+
+        public Task<Ritual<UserIdentity>> GetUserIdentity(long userId, long id)
+        {
+            return IdentityRepository.GetUserIdentity(userId, id);
         }
     }
 }

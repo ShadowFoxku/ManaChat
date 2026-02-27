@@ -13,7 +13,7 @@ namespace ManaChat.API.Controllers.Identity
 {
     [ApiController]
     [Route("api/v1/user")]
-    public class UserController(IUserService userService, IOptions<ManaChatConfiguration> config, IAuthenticatedUserDetails user) : ControllerBase
+    public class UserController(IUserService userService, IOptions<ManaChatConfiguration> config, IAuthenticatedUserDetails user) : RitualControllerBase
     {
         [HttpPost]
         [AllowAnonymous]
@@ -31,10 +31,10 @@ namespace ManaChat.API.Controllers.Identity
 
             var result = await userService.CreateUser(request.Username, email, phone, pword);
 
-            if (result.IsFlowing)
-                return Ok("Creation successful! Please log in to continue.");
+            if (!IsRitualValid(result, out string msg))
+                return BadRequest($"Unable to create user. {msg}");
 
-            return BadRequest($"Unable to create user. {result.GetTear()!.Message}");
+            return Ok("Creation successful! Please log in to continue.");
         }
 
         [HttpPost("login")]
@@ -49,7 +49,7 @@ namespace ManaChat.API.Controllers.Identity
                 })
                 .BindAsync(async (result) =>
                 {
-                    if (result.needsReHash)
+                    if (result.needsReHash && result.isValid)
                     {
                         var newHash = PasswordHelpers.HashPassword(request.Password, config.Value.Encryption.Passwords);
                         await userService.UpdateUserPassword(result.userId, newHash); 
@@ -71,29 +71,24 @@ namespace ManaChat.API.Controllers.Identity
                     return Ritual<(string token, DateTimeOffset expiry)>.Tear("Invalid username or password.");
                 });
 
-            if (res.IsFlowing && !string.IsNullOrWhiteSpace(res.GetValue().token))
+            if (!IsRitualValid(res, out string message))
+                return BadRequest(LoginResponse.Fail($"Unable to log in. {message}"));
+
+            var (token, expiry) = res.GetValue();
+            if (user.UsesCookies)
             {
-                var (token, expiry) = res.GetValue();
-                if (user.UsesCookies)
+                Response.Cookies.Append(Clients.ManaChatWebClient.CookieName, token, new CookieOptions
                 {
-                    Response.Cookies.Append(Clients.ManaChatWebClient.CookieName, token, new CookieOptions
-                    {
-                        HttpOnly = true,
-                        Secure = true,
-                        SameSite = SameSiteMode.Lax,
-                        Expires = expiry
-                    });
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Lax,
+                    Expires = expiry
+                });
 
-                    return Ok(LoginResponse.Success("You are now logged in! Welcome!"));
-                }
-
-                return Ok(LoginResponse.Success(token, expiry, "You are now logged in! Please use this token in your header to access resources."));
+                return Ok(LoginResponse.Success("You are now logged in! Welcome!"));
             }
 
-            if (res.IsTorn)
-                return BadRequest(LoginResponse.Fail($"Unable to log in. {res.GetTear()!.Message}"));
-
-            return BadRequest(LoginResponse.Fail("Unable to log in. Please validate all fields, then try again."));
+            return Ok(LoginResponse.Success(token, expiry, "You are now logged in! Please use this token in your header to access resources."));
         }
     }
 }

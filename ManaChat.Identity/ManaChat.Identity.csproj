@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ManaFox.Core" Version="0.0.28" />
-    <PackageReference Include="ManaFox.Databases.TSQL" Version="0.0.28" />
-    <PackageReference Include="ManaFox.Databases.Core" Version="0.0.28" />
-    <PackageReference Include="ManaFox.Extensions" Version="0.0.28" />
+    <PackageReference Include="ManaFox.Core" Version="0.1.0" />
+    <PackageReference Include="ManaFox.Databases.TSQL" Version="0.1.0" />
+    <PackageReference Include="ManaFox.Databases.Core" Version="0.1.0" />
+    <PackageReference Include="ManaFox.Extensions" Version="0.1.0" />
   </ItemGroup>
 
   <ItemGroup>
