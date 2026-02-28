@@ -92,7 +92,7 @@ namespace ManaChat.Identity.Repositories
         public async Task<Ritual<bool>> LogoutUserSession(string token)
         {
             await using var reader = await GetRuneReaderAsync();
-            return (await reader.ExecuteAsync(IdentityDBConstants.StoredProcedures.UpdateUserSession, CommandType.StoredProcedure, new{ Token = token }))
+            return (await reader.ExecuteAsync(IdentityDBConstants.StoredProcedures.LogoutUserSession, CommandType.StoredProcedure, new{ Token = token }))
                 .Map(result => result > 0);
         }
 

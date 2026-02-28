@@ -78,7 +78,7 @@ namespace ManaChat.API.Controllers.Identity
             var (token, expiry) = res.GetValue();
             if (user.UsesCookies)
             {
-                Response.Cookies.Append(Clients.ManaChatWebClient.CookieName, token, new CookieOptions
+                Response.Cookies.Append(ManaChatWebBasedClient.CookieName, token, new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = true,
@@ -102,6 +102,9 @@ namespace ManaChat.API.Controllers.Identity
 
             if (!IsRitualValid(res, message => $"Logout Failed. {message}", out var result))
                 return result;
+
+            if (user.UsesCookies)
+                Response.Cookies.Delete(ManaChatWebBasedClient.CookieName);
 
             return NoContent();
         }
