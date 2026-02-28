@@ -1,10 +1,9 @@
 ﻿using ManaChat.Core.Constants;
+using ManaChat.Core.Helpers;
+using ManaFox.Core.ConsoleTools;
 using ManaFox.Databases.Migrations;
 using ManaFox.Extensions.Flow;
-using Microsoft.Build.Evaluation;
 using Microsoft.Extensions.Configuration;
-using Serilog;
-using System.Text;
 
 internal class Program
 {
@@ -25,11 +24,7 @@ internal class Program
         var loaderMessaging = typeof(ManaChat.Databases.Messaging.AssemblyLoader).Assembly;
 #pragma warning restore IDE0059 // Unnecessary assignment of a value
 
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.Console()
-            .CreateLogger();
-
+        ManaConsole.Init();
         try
         {
             var config = new ConfigurationBuilder()
@@ -55,43 +50,41 @@ internal class Program
                 if (res > 0)
                     return 1;
             }
-            Log.Information("All migrations completed");
+            Console.WriteLine($"{ConsoleConstants.BrightGreen}[✓] All migrations completed!{ConsoleConstants.Reset}");
             return 0;
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Migration execution failed");
+            Console.WriteLine($"Migration execution failed; {ex.Message}");
             return 1;
         }
     }
 
     private static int MigrateDb(string key, string connString, string sqlPath, bool failOnError)
     {
-        Log.Information($"Starting {key} database migration...");
+        ManaLoader.ShowMigrating(key);
         var root = AppContext.BaseDirectory;
 
         var result = RuneMigrator.Create()
             .Bind(m => m.WithConnectionString(connString))
-            .Scry(m => Log.Verbose("Connection string bound"))
             .Bind(m => m.WithSqlProject(Path.Combine(root, sqlPath)))
-            .Scry(m => Log.Verbose($"Sql project connected"))
             .Bind(m => m.CreateDatabaseIfNotExists())
-            .Scry(m => Log.Verbose($"Db exists"))
             .Bind(m => m.Deploy());
 
         if (!result.IsFlowing)
         {
-            Log.Error("Identity migration failed: {Error}", result.GetTear());
+            Console.WriteLine($"Identity migration failed: {result.GetTear()}");
+            ManaLoader.ShowMigrationFailed(key);
             if (failOnError)
                 return 1;
         }
         else
         {
             var val = result.GetValue()!;
-            Log.Information($"{val.DatabaseName} migration complete. Took: {val.Duration} to deploy {val.DacpacsDeployed} DACPACs.");
-            Log.Debug(val.GetDeploymentResultsTable());        
+            Console.WriteLine($"{val.DatabaseName} migration complete. Took: {val.Duration} to deploy {val.DacpacsDeployed} DACPACs.");
+            Console.WriteLine(val.GetDeploymentResultsTable());
+            ManaLoader.ShowMigrationComplete(key);
         }
-        Log.Information($"Finished {key} database migration...");
         return 0;
     }
 }

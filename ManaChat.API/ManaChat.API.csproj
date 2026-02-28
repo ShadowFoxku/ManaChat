@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.1" />
-    <PackageReference Include="ManaFox.Core" Version="0.1.1" />
-    <PackageReference Include="ManaFox.Databases.Extensions" Version="0.1.1" />
+    <PackageReference Include="ManaFox.Core" Version="0.2.1" />
+    <PackageReference Include="ManaFox.Databases.Extensions" Version="0.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.5-beta1" />
