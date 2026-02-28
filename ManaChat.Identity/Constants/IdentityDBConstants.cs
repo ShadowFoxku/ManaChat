@@ -13,6 +13,7 @@
             public const string DeleteUser = $"{Schema}.usp_user_delete";
             public const string GetUserSessionByToken = $"{Schema}.usp_session_get_by_token";
             public const string UpdateUserSession = $"{Schema}.usp_session_save";
+            public const string LogoutUserSession = $"{Schema}.usp_session_delete";
             public const string VerifyDetailsAvailable = $"{Schema}.usp_user_verify_details_available";
 
             public const string GetUserIdentitiesForUser = $"{Schema}.usp_identities_get_for_user";

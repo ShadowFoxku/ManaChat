@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ManaFox.Databases.Migrations" Version="0.1.0" />
-    <PackageReference Include="ManaFox.Extensions" Version="0.1.0" />
+    <PackageReference Include="ManaFox.Databases.Migrations" Version="0.1.2" />
+    <PackageReference Include="ManaFox.Extensions" Version="0.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="11.0.0-preview.1.26104.118" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="11.0.0-preview.1.26104.118" />
     <PackageReference Include="Serilog" Version="4.3.2-dev-02418" />

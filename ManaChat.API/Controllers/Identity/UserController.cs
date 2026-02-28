@@ -1,4 +1,5 @@
-﻿using ManaChat.API.Controllers.Identity.Models;
+﻿using ManaChat.API.Clients;
+using ManaChat.API.Controllers.Identity.Models;
 using ManaChat.API.Helpers;
 using ManaChat.Core.Configuration;
 using ManaChat.Core.Models.Auth;
@@ -89,6 +90,20 @@ namespace ManaChat.API.Controllers.Identity
             }
 
             return Ok(LoginResponse.Success(token, expiry, "You are now logged in! Please use this token in your header to access resources."));
+        }
+
+        [HttpDelete("login")]
+        public async Task<IActionResult> Logout()
+        {
+            var client = ClientFetcher.GetFromHeaders(Request.Headers);
+            var token = client.GetClientToken(Request);
+            var hashed = TokenHelpers.HashToken(token);
+            var res = await userService.LogoutUserSession(hashed);
+
+            if (!IsRitualValid(res, message => $"Logout Failed. {message}", out var result))
+                return result;
+
+            return NoContent();
         }
     }
 }

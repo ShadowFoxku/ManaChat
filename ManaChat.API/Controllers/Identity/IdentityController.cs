@@ -75,5 +75,29 @@ namespace ManaChat.API.Controllers.Identity
 
             return Ok(res.GetValue());
         }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> DeleteIdentity(long id)
+        {
+            var userId = authedUser.UserId!.Value;
+            var res = await identityService.GetUserIdentity(userId, id)
+                .BindAsync((res) =>
+                {
+                    if (res == null)
+                        return Ritual<bool>.Tear(APITear("Identity not found", HttpStatusCode.NotFound));
+
+                    if (res.Default)
+                        return Ritual<bool>.Tear(APITear("Can not delete identity that is set as default. Please choose a new default before deleting.", HttpStatusCode.BadRequest));
+
+                    return Ritual<bool>.Flow(true);
+                })
+                .BindAsync((_) => identityService.DeleteUserIdentity(id));
+
+            if (!IsRitualValid(res, message => $"Unable to delete identity. {message}", out var result))
+                return result;
+
+            return NoContent();
+        }
     }
 }

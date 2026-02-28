@@ -1,4 +1,5 @@
-﻿using ManaChat.Core.Models.Identity;
+﻿using ManaChat.Core.Helpers;
+using ManaChat.Core.Models.Identity;
 using ManaChat.Identity.Constants;
 using ManaFox.Core.Flow;
 using ManaFox.Databases.Core.Interfaces;
@@ -41,8 +42,11 @@ namespace ManaChat.Identity.Repositories
         public async Task<Ritual<bool>> DeleteUserIdentity(long id)
         {
             await using var reader = await GetRuneReaderAsync();
-            return (await reader.ExecuteAsync(IdentityDBConstants.StoredProcedures.DeleteUserIdentity, CommandType.StoredProcedure, new { Id = id }))
-                .Map(result => result > 0);
+            return (await reader.ExecuteAsync(
+                    IdentityDBConstants.StoredProcedures.DeleteUserIdentity, 
+                    CommandType.StoredProcedure, 
+                    new { Id = id, ReplacementName = RandomStrings.GenerateRandomDeletedNameString() })
+                ).Map(result => result > 0);
         }
     }
 }

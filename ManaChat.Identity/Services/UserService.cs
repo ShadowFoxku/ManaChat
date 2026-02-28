@@ -66,6 +66,11 @@ namespace ManaChat.Identity.Services
             return UserRepository.UpdateUserSession(sessionId, userId, token, expiresAt);
         }
 
+        public Task<Ritual<bool>> LogoutUserSession(string token)
+        {
+            return UserRepository.LogoutUserSession(token);
+        }
+
         public Task<Ritual<bool>> DeleteUser(long id)
         {
             return ReaderManager.RunInTransactionAsync(DatabaseConstants.IdentityDatabaseKey, () =>

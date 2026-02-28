@@ -1,4 +1,5 @@
-﻿using ManaChat.Core.Models.Identity;
+﻿using ManaChat.Core.Helpers;
+using ManaChat.Core.Models.Identity;
 using ManaChat.Identity.Constants;
 using ManaChat.Identity.Models;
 using ManaFox.Core.Flow;
@@ -62,7 +63,11 @@ namespace ManaChat.Identity.Repositories
         public async Task<Ritual<bool>> DeleteUser(long id)
         {
             await using var reader = await GetRuneReaderAsync();
-            return (await reader.ExecuteAsync(IdentityDBConstants.StoredProcedures.DeleteUser, CommandType.StoredProcedure, new { Id = id })).Map(result => result > 0);
+            return (await reader.ExecuteAsync(
+                    IdentityDBConstants.StoredProcedures.DeleteUser, 
+                    CommandType.StoredProcedure, 
+                    new { Id = id, ReplacementName = RandomStrings.GenerateRandomDeletedNameString() })
+                ).Map(result => result > 0);
         }
 
         public async Task<Ritual<Session>> GetUserSession(string token)
@@ -82,6 +87,13 @@ namespace ManaChat.Identity.Repositories
                 StartedAt = DateTimeOffset.UtcNow,
                 ExpiresAt = expiresAt
             })).Map(result => result > 0);
+        }
+
+        public async Task<Ritual<bool>> LogoutUserSession(string token)
+        {
+            await using var reader = await GetRuneReaderAsync();
+            return (await reader.ExecuteAsync(IdentityDBConstants.StoredProcedures.UpdateUserSession, CommandType.StoredProcedure, new{ Token = token }))
+                .Map(result => result > 0);
         }
 
         public async Task<Ritual<bool>> AreDetailsAvailable(string username, string email, string phoneNumber)

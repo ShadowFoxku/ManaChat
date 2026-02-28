@@ -1,5 +1,4 @@
-﻿using ManaChat.Core.Enums.Identity;
-using ManaChat.Core.Models.Identity;
+﻿using ManaChat.Core.Models.Identity;
 using ManaFox.Core.Flow;
 
 namespace ManaChat.Identity.Services
@@ -15,5 +14,6 @@ namespace ManaChat.Identity.Services
         Task<Ritual<(long, string)>> GetUserPassword(string userName);
         Task<Ritual<List<User>>> SearchUserByUsername(string username);
         Task<Ritual<bool>> UpdateUserSession(long sessionId, long userId, string token, DateTimeOffset expiresAt);
+        Task<Ritual<bool>> LogoutUserSession(string token);
     }
 }
