@@ -1,6 +1,7 @@
 ﻿using ManaChat.API.Clients;
 using ManaChat.API.Controllers.Identity.Models;
 using ManaChat.API.Helpers;
+using ManaChat.API.Models;
 using ManaChat.Core.Configuration;
 using ManaChat.Core.Models.Auth;
 using ManaChat.Identity.Services;
@@ -25,17 +26,17 @@ namespace ManaChat.API.Controllers.Identity
             var phone = config.Value.Users.AccountOptions.AcceptPhoneNumber ? request.PhoneNumber : string.Empty;
 
             if (config.Value.Users.AccountOptions.RequireEmail && string.IsNullOrWhiteSpace(email))
-                return BadRequest("Email is required but was not provided.");
+                return BadRequest(MessageResponse.Standard("Email is required but was not provided."));
 
             if (config.Value.Users.AccountOptions.RequirePhoneNumber && string.IsNullOrWhiteSpace(phone))
-                return BadRequest("Phone number is required but was not provided.");
+                return BadRequest(MessageResponse.Standard("Phone number is required but was not provided."));
 
             var result = await userService.CreateUser(request.Username, email, phone, pword);
 
             if (!IsRitualValid(result, message => $"Unable to create user. {message}", out var res))
                 return res;
 
-            return Ok("Creation successful! Please log in to continue.");
+            return Ok(MessageResponse.Standard("Creation successful! Please log in to continue."));
         }
 
         [HttpPost("login")]

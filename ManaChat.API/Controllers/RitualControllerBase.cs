@@ -1,4 +1,5 @@
-﻿using ManaFox.Core.Errors;
+﻿using ManaChat.API.Models;
+using ManaFox.Core.Errors;
 using ManaFox.Core.Flow;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -15,7 +16,7 @@ namespace ManaChat.API.Controllers
         public bool IsRitualValid<T>(Ritual<T> ritual, Func<string, string> messageFormatter, out IActionResult result)
         {
             ArgumentNullException.ThrowIfNull(ritual);
-            result = Accepted("Handler behaviour is inconsistent. Please contact support.");
+            result = Accepted(MessageResponse.Standard("Handler behaviour is inconsistent. Please contact support."));
 
             if (ritual.IsTorn)
             {   
@@ -29,16 +30,17 @@ namespace ManaChat.API.Controllers
                 }
 
                 var message = messageFormatter?.Invoke(tear.Message) ?? tear.Message;
+                var messageBody = MessageResponse.Standard(message);
 
                 result = tear is HTTPTear http 
                     ? http.StatusCode switch
                     {
-                        HttpStatusCode.NotFound => NotFound(message),
-                        HttpStatusCode.Unauthorized => Unauthorized(message),
-                        HttpStatusCode.Forbidden => Forbid(message),
-                        _ => BadRequest(message),
+                        HttpStatusCode.NotFound => NotFound(messageBody),
+                        HttpStatusCode.Unauthorized => Unauthorized(messageBody),
+                        HttpStatusCode.Forbidden => Forbid(),
+                        _ => BadRequest(messageBody),
                     } 
-                    : BadRequest(message);
+                    : BadRequest(messageBody);
 
                 return false;
             }

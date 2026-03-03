@@ -9,7 +9,7 @@ namespace ManaChat.Core.Helpers
         static CancellationTokenSource? SpinnerCts;
         static Task? SpinnerTask;
         static string DisplayText = "";
-        static readonly string[] SpinnerFrames = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" };
+        static readonly string[] SpinnerFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
         static string HighlightColour = ConsoleConstants.White;
         static LineCountingWriter? CountingWriter;
 
@@ -37,8 +37,7 @@ namespace ManaChat.Core.Helpers
                 return;
             }
 
-            if (CountingWriter == null)
-                CountingWriter = new LineCountingWriter(Console.Out);
+            CountingWriter ??= new LineCountingWriter(Console.Out);
 
             Console.SetOut(CountingWriter);
             Console.WriteLine($"  {ConsoleConstants.Cyan}{SpinnerFrames[0]}{ConsoleConstants.Reset}  {DisplayText}");

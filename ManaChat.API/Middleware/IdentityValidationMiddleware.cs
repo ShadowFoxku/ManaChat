@@ -14,8 +14,26 @@ namespace ManaChat.API.Middleware
     {
         public async Task Invoke(HttpContext context, IAuthenticatedUserDetails user, IUsersRepository userRepo, IOptions<ManaChatConfiguration> config)
         {
+            if (context.GetEndpoint() == null)
+            {
+                context.Response.StatusCode = StatusCodes.Status404NotFound;
+                await context.Response.WriteAsJsonAsync(new { error = "RouteNotFound", message = "No registered route could be found at the requested Path" });
+                return;
+            }
+
             var authedUser = user as AuthenticatedUserDetails ?? throw new Exception("Authenticated user details is not of type AuthenticatedUserDetails");
-            var client = ClientFetcher.GetFromHeaders(context.Request.Headers);
+            ManaChatClient client;
+            try
+            {
+                client = ClientFetcher.GetFromHeaders(context.Request.Headers);
+            }
+            catch
+            {
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsJsonAsync(new { error = "ClientNotFound", message = "No client header was found on the request" });
+                return;
+            }
+            
             authedUser.UsesCookies = client.UsesCookies;
 
             if (IsEndpointAllowAnonymous(context))

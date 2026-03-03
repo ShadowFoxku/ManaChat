@@ -10,6 +10,7 @@ using ManaFox.Databases.Core.Interfaces;
 using ManaFox.Databases.Extensions;
 using ManaFox.Databases.TSQL;
 
+namespace ManaChat.Api;
 public partial class Program
 {
     private static void Main(string[] args)
@@ -49,6 +50,15 @@ public partial class Program
                 options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
             });
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("All", policy =>
+            {
+                policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+            });
+        });
+
+
         var app = builder.Build();
 
         app.Lifetime.ApplicationStarted.Register(() => ManaLoader.ShowReady(settings?.InstanceName ?? string.Empty));
@@ -64,6 +74,10 @@ public partial class Program
         //app.UseAuthorization();
 
         app.MapControllers();
+
+#if DEBUG
+        app.UseCors("All");
+#endif
 
         app.UseMiddleware<ErrorSafetyMiddleware>();
         app.UseMiddleware<EnforceConsumerVersionMiddleware>();
