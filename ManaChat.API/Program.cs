@@ -52,9 +52,9 @@ public partial class Program
 
         builder.Services.AddCors(options =>
         {
-            options.AddPolicy("All", policy =>
+            options.AddPolicy("Dev", policy =>
             {
-                policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                policy.WithOrigins("https://localhost:4200").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
             });
         });
 
@@ -76,7 +76,7 @@ public partial class Program
         app.MapControllers();
 
 #if DEBUG
-        app.UseCors("All");
+        app.UseCors("Dev");
 #endif
 
         app.UseMiddleware<ErrorSafetyMiddleware>();

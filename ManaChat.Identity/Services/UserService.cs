@@ -58,7 +58,13 @@ namespace ManaChat.Identity.Services
 
         public Task<Ritual<(long, string)>> GetUserPassword(string username)
         {
-            return UserRepository.GetUserByUsername(username).BindAsync((user) => Ritual<(long, string)>.Flow((user.Id, user.PasswordHash)));
+            return UserRepository.GetUserByUsername(username).BindAsync((user) =>
+                {
+                    if (user == null)
+                        return Ritual<(long, string)>.Tear("Username is invalid.");
+                    return Ritual<(long, string)>.Flow((user.Id, user.PasswordHash));
+                }
+            );
         }
 
         public Task<Ritual<bool>> UpdateUserSession(long sessionId, long userId, string token, DateTimeOffset expiresAt)

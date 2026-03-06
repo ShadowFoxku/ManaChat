@@ -83,7 +83,7 @@ namespace ManaChat.API.Controllers.Identity
                 {
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Lax,
+                    SameSite = SameSiteMode.None,
                     Expires = expiry
                 });
 
