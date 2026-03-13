@@ -31,13 +31,21 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ManaChat.Core\ManaChat.Core.csproj" />
-    <ProjectReference Include="..\ManaChat.Databases.Identity\ManaChat.Databases.Identity.sqlproj" />
-    <ProjectReference Include="..\ManaChat.Databases.Messaging\ManaChat.Databases.Messaging.sqlproj" />
+    <ProjectReference Include="..\ManaChat.Databases.Identity\ManaChat.Databases.Identity.sqlproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\ManaChat.Databases.Messaging\ManaChat.Databases.Messaging.sqlproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Scripts\Identity\" />
     <Folder Include="Scripts\Messaging\" />
   </ItemGroup>
+
+  <Target Name="CopyDacpacs" AfterTargets="Build">
+    <ItemGroup>
+      <Dacpacs Include="..\ManaChat.Databases.*\bin\$(Configuration)\*.dacpac" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(Dacpacs)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
 
 </Project>
