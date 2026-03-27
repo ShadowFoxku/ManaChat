@@ -4,7 +4,7 @@ namespace ManaChat.API.Controllers.Models
 {
     public class ConfigResponse(ManaChatConfiguration source)
     {
-        public string InstanceName = source.InstanceName;
+        public string ServerName = source.ServerName;
         public UserConfigResponse Users = new(source.Users);
     }
 

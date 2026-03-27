@@ -34,7 +34,7 @@ namespace ManaChat.API.Controllers.Identity
             var identityConfig = config.Value.Users.IdentityOptions;
 
             if (!identityConfig.AllowMultipleIdentities)
-                return BadRequest(MessageResponse.Standard("Identity registration is disabled on this instance. Please update your default identity."));
+                return BadRequest(MessageResponse.Standard("Identity registration is disabled on this server. Please update your default identity."));
 
             if (identityConfig.MaxIdentitiesPerUser.HasValue)
             {
@@ -45,7 +45,7 @@ namespace ManaChat.API.Controllers.Identity
                     return res;
 
                 if (!canCreate.GetValue())
-                    return BadRequest(MessageResponse.Standard("You have reached the identity limit for this instance. Please delete or update existing identities, instead."));
+                    return BadRequest(MessageResponse.Standard("You have reached the identity limit for this server. Please delete or update existing identities, instead."));
             }
 
             var identity = await identityService.CreateUserIdentity(authedUser.UserId!.Value, request.Name, request.IsDefault);

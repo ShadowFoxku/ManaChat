@@ -17,7 +17,7 @@ namespace ManaChat.Core.Helpers
         {
             HighlightColour = ConsoleConstants.BrightMagenta;
             DisplayText = "Starting up...";
-            StartProcess("Launching ", "ManaChat", " instance...");
+            StartProcess("Launching ", "ManaChat", " server...");
         }
 
         public static void ShowMigrating(string dbName)
@@ -49,7 +49,7 @@ namespace ManaChat.Core.Helpers
 
         public static void ShowReady(string subtitle)
         {
-            EndProcess("Your ", "ManaChat", " instance is ready!", "[✓] Loaded!", subtitle);
+            EndProcess("Your ", "ManaChat", " server is ready!", "[✓] Loaded!", subtitle);
         }
 
         public static void ShowMigrationComplete(string dbName)
@@ -91,15 +91,15 @@ namespace ManaChat.Core.Helpers
             Console.WriteLine();
         }
 
-        public static void ShowInstanceNamed(string instanceName)
+        public static void ShowServerNamed(string serverName)
         {
             if (!ManaConsole.IsTTY)
             {
-                Console.WriteLine($"  Instance Identified as: {instanceName}");
+                Console.WriteLine($"  Server Identified as: {serverName}");
                 return;
             }
 
-            PrintBox("Welcome to the ", "ManaChat", " network,", instanceName);
+            PrintBox("Welcome to the ", "ManaChat", " network,", serverName);
         }
 
         private static void PrintBox(string before, string highlight = "", string after = "", string subtitle = "")

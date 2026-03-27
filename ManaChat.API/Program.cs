@@ -28,8 +28,8 @@ public partial class Program
         builder.Services.AddScoped<IRuneReaderManager, RuneReaderManager>();
 
         var settings = builder.Configuration.GetSection("ManaChat").Get<ManaChatConfiguration>();
-        if (!string.IsNullOrWhiteSpace(settings?.InstanceName))
-            ManaLoader.ShowInstanceNamed(settings.InstanceName);
+        if (!string.IsNullOrWhiteSpace(settings?.ServerName))
+            ManaLoader.ShowServerNamed(settings.ServerName);
 
         // identity
         builder.Services.AddScoped<IUserService, UserService>();
@@ -61,7 +61,7 @@ public partial class Program
 
         var app = builder.Build();
 
-        app.Lifetime.ApplicationStarted.Register(() => ManaLoader.ShowReady(settings?.InstanceName ?? string.Empty));
+        app.Lifetime.ApplicationStarted.Register(() => ManaLoader.ShowReady(settings?.ServerName ?? string.Empty));
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
