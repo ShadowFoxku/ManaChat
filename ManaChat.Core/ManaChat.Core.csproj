@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ManaFox.Core" Version="0.2.1" />
+    <PackageReference Include="ManaFox.Core" Version="0.4.1" />
+    <PackageReference Include="ManaFox.Security" Version="0.4.1" />
   </ItemGroup>
 
 </Project>

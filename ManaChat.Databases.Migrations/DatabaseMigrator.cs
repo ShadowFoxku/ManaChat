@@ -1,7 +1,7 @@
 using ManaChat.Core.Constants;
 using ManaChat.Core.Helpers;
 using ManaFox.Core.ConsoleTools;
-using ManaFox.Databases.Migrations;
+using ManaFox.Databases.TSQL.Migrations;
 using ManaFox.Extensions.Flow;
 using Microsoft.Extensions.Configuration;
 
@@ -9,7 +9,7 @@ namespace ManaChat.Databases.Migrations;
 
 public class DatabaseMigrator
 {
-    private IConfigurationSection _connectionStrings;
+    private readonly IConfigurationSection _connectionStrings;
     
     public DatabaseMigrator()
     {

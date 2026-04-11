@@ -1,5 +1,6 @@
 ﻿using ManaChat.API.Controllers.Models;
 using ManaChat.Core.Configuration;
+using ManaFox.Hosting.Middleware.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

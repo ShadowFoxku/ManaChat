@@ -1,12 +1,14 @@
 ﻿using ManaChat.API.Clients;
 using ManaChat.API.Controllers.Identity.Models;
-using ManaChat.API.Helpers;
 using ManaChat.API.Models;
 using ManaChat.Core.Configuration;
 using ManaChat.Core.Models.Auth;
 using ManaChat.Identity.Services;
 using ManaFox.Core.Flow;
 using ManaFox.Extensions.Flow;
+using ManaFox.Hosting.Middleware.Controllers;
+using ManaFox.Security.Passwords;
+using ManaFox.Security.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -26,17 +28,17 @@ namespace ManaChat.API.Controllers.Identity
             var phone = config.Value.Users.AccountOptions.AcceptPhoneNumber ? request.PhoneNumber : string.Empty;
 
             if (config.Value.Users.AccountOptions.RequireEmail && string.IsNullOrWhiteSpace(email))
-                return BadRequest(MessageResponse.Standard("Email is required but was not provided."));
+                return BadRequest(ApiMessageResponse.Standard("Email is required but was not provided."));
 
             if (config.Value.Users.AccountOptions.RequirePhoneNumber && string.IsNullOrWhiteSpace(phone))
-                return BadRequest(MessageResponse.Standard("Phone number is required but was not provided."));
+                return BadRequest(ApiMessageResponse.Standard("Phone number is required but was not provided."));
 
             var result = await userService.CreateUser(request.Username, email, phone, pword);
 
             if (!IsRitualValid(result, message => $"Unable to create user. {message}", out var res))
                 return res;
 
-            return Ok(MessageResponse.Standard("Creation successful! Please log in to continue."));
+            return Ok(ApiMessageResponse.Standard("Creation successful! Please log in to continue."));
         }
 
         [HttpPost("login")]
@@ -62,7 +64,7 @@ namespace ManaChat.API.Controllers.Identity
                 {
                     if (result.isValid)
                     {
-                        var token = TokenHelpers.GenerateNewToken();
+                        var token = TokenHelpers.GenerateNewToken(32);
                         var expiry = DateTimeOffset.UtcNow.Add(config.Value.TokenSettings.GetExpiryTimeSpan());
                         var res = await userService.UpdateUserSession(0, result.userId, token.hash, expiry);
                         if (!res.IsFlowing)

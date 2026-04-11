@@ -9,6 +9,8 @@ using ManaChat.Identity.Services;
 using ManaFox.Databases.Core.Interfaces;
 using ManaFox.Databases.Extensions;
 using ManaFox.Databases.TSQL;
+using ManaFox.Hosting.Middleware;
+using ManaFox.Hosting.Middleware.Conventions;
 
 namespace ManaChat.Api;
 public partial class Program
@@ -78,10 +80,9 @@ public partial class Program
 #if DEBUG
         app.UseCors("Dev");
 #endif
-
-        app.UseMiddleware<ErrorSafetyMiddleware>();
         app.UseMiddleware<EnforceConsumerVersionMiddleware>();
         app.UseMiddleware<IdentityValidationMiddleware>();
+        app.AddManaFoxMiddleware();
 
         app.Run();
     }

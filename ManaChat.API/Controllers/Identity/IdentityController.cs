@@ -5,6 +5,7 @@ using ManaChat.Core.Models.Auth;
 using ManaChat.Identity.Services;
 using ManaFox.Core.Flow;
 using ManaFox.Extensions.Flow;
+using ManaFox.Hosting.Middleware.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Net;
@@ -34,7 +35,7 @@ namespace ManaChat.API.Controllers.Identity
             var identityConfig = config.Value.Users.IdentityOptions;
 
             if (!identityConfig.AllowMultipleIdentities)
-                return BadRequest(MessageResponse.Standard("Identity registration is disabled on this server. Please update your default identity."));
+                return BadRequest(ApiMessageResponse.Standard("Identity registration is disabled on this server. Please update your default identity."));
 
             if (identityConfig.MaxIdentitiesPerUser.HasValue)
             {
@@ -45,7 +46,7 @@ namespace ManaChat.API.Controllers.Identity
                     return res;
 
                 if (!canCreate.GetValue())
-                    return BadRequest(MessageResponse.Standard("You have reached the identity limit for this server. Please delete or update existing identities, instead."));
+                    return BadRequest(ApiMessageResponse.Standard("You have reached the identity limit for this server. Please delete or update existing identities, instead."));
             }
 
             var identity = await identityService.CreateUserIdentity(authedUser.UserId!.Value, request.Name, request.IsDefault);

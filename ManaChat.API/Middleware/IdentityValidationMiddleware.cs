@@ -1,9 +1,9 @@
 ﻿using ManaChat.API.Clients;
-using ManaChat.API.Helpers;
 using ManaChat.API.Models.Auth;
 using ManaChat.Core.Configuration;
 using ManaChat.Core.Models.Auth;
 using ManaChat.Identity.Repositories;
+using ManaFox.Security.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Options;
@@ -63,7 +63,7 @@ namespace ManaChat.API.Middleware
             if (session.IsFlowing && session.GetValue() == null)
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                await context.Response.WriteAsJsonAsync(new { error = "Internal Server Error", message = "Invalid Token" });
+                await context.Response.WriteAsJsonAsync(new { error = "Unauthorized", message = "Invalid Token" });
                 return;
             }
 

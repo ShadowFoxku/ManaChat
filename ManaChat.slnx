@@ -1,11 +1,11 @@
 <Solution>
   <Project Path="ManaChat.API/ManaChat.API.csproj" />
   <Project Path="ManaChat.Core/ManaChat.Core.csproj" />
-  <Project Path="ManaChat.Databases.Identity/ManaChat.Databases.Identity.sqlproj" Id="170a439b-f16f-4372-ab3f-3f36df212678">
+  <Project Path="ManaChat.Databases.Identity/ManaChat.Databases.Identity.sqlproj" Id="53b98cab-bdbb-4ddf-840c-0463e3e71726">
     <Build />
     <Deploy />
   </Project>
-  <Project Path="ManaChat.Databases.Messaging/ManaChat.Databases.Messaging.sqlproj" Id="795f787e-89a6-4c9b-a44d-a7f31629447d">
+  <Project Path="ManaChat.Databases.Messaging/ManaChat.Databases.Messaging.sqlproj" Id="18e838a9-ec6e-4420-8c1e-7a5cc96ed351">
     <Build />
     <Deploy />
   </Project>
